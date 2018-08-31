@@ -73,8 +73,8 @@ public enum Instrucao {
 	IRET((byte) 0b00110011), //
 	INT((byte) 0b00110100), //
 
-	BP_P((byte) 0b11111110), //
-	BP_S((byte) 0b11111111);
+	INC_BP((byte) 0b11111110), //
+	DEC_BP((byte) 0b11111111);
 
 	private byte code;
 

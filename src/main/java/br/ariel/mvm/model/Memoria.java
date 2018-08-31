@@ -15,14 +15,17 @@ public class Memoria {
 	}
 
 	public byte getData(short idx) throws PosicaoMemoriaInvalida {
-		if (0 > memoria.length || idx >= memoria.length) {
+		if (0 > idx || memoria.length <= idx) {
 			throw new PosicaoMemoriaInvalida(memoria.length, idx);
 		}
 
 		return memoria[idx];
 	}
 
-	public void setData(short idx, byte data) {
+	public void setData(short idx, byte data) throws PosicaoMemoriaInvalida {
+		if (0 > idx || memoria.length <= idx) {
+			throw new PosicaoMemoriaInvalida(memoria.length, idx);
+		}
 		this.memoria[idx] = data;
 	}
 }

@@ -10,8 +10,8 @@ public class Processador {
 	private short cx = (short) 0x0000;
 
 	private short ip = (short) 0x0000;
-	private short bp = (short) 0xFFFF;
-	private short sp = (short) 0xFFFF;
+	private short bp = (short) 0x7FFE;
+	private short sp = (short) 0x7FFE;
 
 	public Processador() {
 		super();
@@ -70,34 +70,34 @@ public class Processador {
 	}
 
 	public byte getAl() {
-		return (byte) (0x00FF & ax);
+		return (byte) ((short) 0x00FF & ax);
 	}
 
 	public byte getAh() {
-		return (byte) (0xFF00 & ax);
+		return (byte) (((short) 0xFF00 & ax) >> 8);
 	}
 
 	public byte getBl() {
-		return (byte) (0x00FF & bx);
+		return (byte) ((short) 0x00FF & bx);
 	}
 
 	public byte getBh() {
-		return (byte) (0xFF00 & bx);
+		return (byte) (((short) 0xFF00 & bx) >> 8);
 	}
 
 	public byte getCl() {
-		return (byte) (0x00FF & cx);
+		return (byte) ((short) 0x00FF & cx);
 	}
 
 	public byte getCh() {
-		return (byte) (0xFF00 & cx);
+		return (byte) (((short) 0xFF00 & cx) >> 8);
 	}
 
 	public byte getBpl() {
-		return (byte) (0x00FF & bp);
+		return (byte) ((short) 0x00FF & bp);
 	}
 
 	public byte getBph() {
-		return (byte) (0xFF00 & bp);
+		return (byte) (((short) 0xFF00 & bp) >> 8);
 	}
 }
