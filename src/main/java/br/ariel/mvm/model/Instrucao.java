@@ -59,8 +59,8 @@ public enum Instrucao {
 	HALT((byte) 0b00101000), //
 	DEC_SP((byte) 0b00101001), //
 
-	MOV_MEN_BP_S_AX((byte) 0b00101010), //
-	MOV_MEN_BP_P_AX((byte) 0b00101011), //
+	MOV_MEM_BP_S_AX((byte) 0b00101010), //
+	MOV_MEM_BP_P_AX((byte) 0b00101011), //
 	MOV_AX_LITERAL((byte) 0b00101100), //
 	TEST_AX_BX((byte) 0b00101101), //
 	INC_SP((byte) 0b00101110), //

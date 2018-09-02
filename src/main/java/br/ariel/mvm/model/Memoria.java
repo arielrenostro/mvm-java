@@ -28,4 +28,8 @@ public class Memoria {
 		}
 		this.memoria[idx] = data;
 	}
+
+	public short getTamanho() {
+		return (short) memoria.length;
+	}
 }

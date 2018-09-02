@@ -22,6 +22,7 @@ public class ProcessadorController {
 
 	public void processar(Processador processador, Memoria memoria, Monitor monitor) throws SemProcessadorException, SemMemoriaException, MemoriaSemTamanhoException, PosicaoMemoriaInvalida, InterruptedException, InstrucaoInvalidaException {
 		validarProcessar(processador, memoria);
+		definirRegistradores(processador, memoria);
 
 		Map<Byte, Instrucao> instrucoes = carregarInstrucoes();
 		Instrucao instrucao = null;
@@ -30,6 +31,12 @@ public class ProcessadorController {
 			instrucao = proximaInstrucao(processador, memoria, instrucoes);
 			executarInstrucao(processador, memoria, monitor, instrucao);
 		}
+	}
+
+	public void definirRegistradores(Processador processador, Memoria memoria) {
+		short ultimoIdxMemoria = (short) (memoria.getTamanho() - 1);
+		processador.setSp(ultimoIdxMemoria);
+		processador.setBp(ultimoIdxMemoria);
 	}
 
 	private Map<Byte, Instrucao> carregarInstrucoes() {
@@ -53,31 +60,64 @@ public class ProcessadorController {
 			processador.setCx(processador.getAx());
 
 		} else if (Instrucao.MOV_AX_MEM.equals(instrucao)) {
-			short idx = memoria.getData(processador.incIp());
-			processador.setAx(memoria.getData(idx));
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idx = concatenarBytes(high, low);
+
+			low = memoria.getData(idx++);
+			high = memoria.getData(idx);
+
+			short ax = concatenarBytes(high, low);
+			processador.setAx(ax);
 
 		} else if (Instrucao.MOV_AX_MEM_BX_P.equals(instrucao)) {
-			short idx = memoria.getData(processador.incIp());
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idx = concatenarBytes(high, low);
 			idx += processador.getBx();
-			processador.setAx(memoria.getData(idx));
+
+			low = memoria.getData(idx++);
+			high = memoria.getData(idx);
+
+			short ax = concatenarBytes(high, low);
+			processador.setAx(ax);
 
 		} else if (Instrucao.MOV_AX_MEM_BP_S.equals(instrucao)) {
-			short idx = memoria.getData(processador.incIp());
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idx = concatenarBytes(high, low);
 			idx -= processador.getBp();
-			processador.setAx(memoria.getData(idx));
+
+			low = memoria.getData(idx++);
+			high = memoria.getData(idx);
+
+			short ax = concatenarBytes(high, low);
+			processador.setAx(ax);
 
 		} else if (Instrucao.MOV_AX_MEM_BP_P.equals(instrucao)) {
-			short idx = memoria.getData(processador.incIp());
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idx = concatenarBytes(high, low);
 			idx += processador.getBp();
-			processador.setAx(memoria.getData(idx));
+
+
+			low = memoria.getData(idx++);
+			high = memoria.getData(idx);
+
+			short ax = concatenarBytes(high, low);
+			processador.setAx(ax);
 
 		} else if (Instrucao.MOV_MEM_AX.equals(instrucao)) {
-			short idx = memoria.getData(processador.incIp());
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idx = concatenarBytes(high, low);
 			memoria.setData(idx++, processador.getAl());
 			memoria.setData(idx, processador.getAh());
 
 		} else if (Instrucao.MOV_MEM_BX_P_AX.equals(instrucao)) {
-			short idx = memoria.getData(processador.incIp());
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idx = concatenarBytes(high, low);
 			idx += processador.getBx();
 			memoria.setData(idx++, processador.getAl());
 			memoria.setData(idx, processador.getAh());
@@ -246,14 +286,18 @@ public class ProcessadorController {
 		} else if (Instrucao.DEC_SP.equals(instrucao)) {
 			processador.setSp((short) (processador.getSp() - 2));
 
-		} else if (Instrucao.MOV_MEN_BP_S_AX.equals(instrucao)) {
-			short idx = memoria.getData(processador.incIp());
+		} else if (Instrucao.MOV_MEM_BP_S_AX.equals(instrucao)) {
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idx = concatenarBytes(high, low);
 			idx = (short) (processador.getBp() - idx);
 			memoria.setData(idx++, processador.getAl());
 			memoria.setData(idx, processador.getAh());
 
-		} else if (Instrucao.MOV_MEN_BP_P_AX.equals(instrucao)) {
-			short idx = memoria.getData(processador.incIp());
+		} else if (Instrucao.MOV_MEM_BP_P_AX.equals(instrucao)) {
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idx = concatenarBytes(high, low);
 			idx = (short) (processador.getBp() + idx);
 			memoria.setData(idx++, processador.getAl());
 			memoria.setData(idx, processador.getAh());
@@ -303,17 +347,17 @@ public class ProcessadorController {
 	}
 
 	/**
-	 * Rotaciona os bits do parâmetro <code>byte1</code> 8 posições a esquerda e aplica a operação
-	 * <code>or</code> encima do parâmetro <code>byte2</code>. O resultado disso é uma concatenação de bits.<br>
+	 * Rotaciona os bits do parametro <code>high</code> 8 posicoes a esquerda e aplica a operacoes
+	 * <code>or</code> encima do parametro <code>low</code>. O resultado disso e' uma concatenacao de bits.<br>
 	 * Exemplo:<br>
 	 * [0000 1111] [0000 0001] ||| Resultado: 0000 1111 0000 0001
 	 *
-	 * @param byte1
-	 * @param byte2
+	 * @param high
+	 * @param low
 	 * @return
 	 */
-	private short concatenarBytes(byte byte1, byte byte2) {
-		return (short) ((byte1 << 8) | byte2);
+	private short concatenarBytes(byte high, byte low) {
+		return (short) ((high << 8) | low);
 	}
 
 	private Instrucao proximaInstrucao(Processador processador, Memoria memoria, Map<Byte, Instrucao> instrucoes) throws PosicaoMemoriaInvalida, InstrucaoInvalidaException {
