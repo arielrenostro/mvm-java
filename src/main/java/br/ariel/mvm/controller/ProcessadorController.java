@@ -179,12 +179,14 @@ public class ProcessadorController {
 
 			processador.setIp(jmpIdx);
 		} else if (Instrucao.CALL.equals(instrucao)) {
-			short idxCall = processador.incIp();
+			byte jmpPosicaoLow = memoria.getData(processador.incIp());
+			byte jmpPosicaoHigh = memoria.getData(processador.incIp());
+			short idxCall = concatenarBytes(jmpPosicaoHigh, jmpPosicaoLow);
 
 			short idxProximoIp = processador.incIp();
 			short idxSp = processador.getSp();
-			memoria.setData(idxSp--, (byte) (idxProximoIp & 0x00FF));
 			memoria.setData(idxSp--, (byte) (idxProximoIp & 0xFF00));
+			memoria.setData(idxSp--, (byte) (idxProximoIp & 0x00FF));
 
 			processador.setSp(idxSp);
 			processador.setIp(idxCall);
@@ -373,7 +375,7 @@ public class ProcessadorController {
 	 * @return
 	 */
 	private short concatenarBytes(byte high, byte low) {
-		return (short) ((high << 8) | low);
+		return (short) ((high << 8) | (0xFF & low));
 	}
 
 	private Instrucao proximaInstrucao(Processador processador, Memoria memoria, Map<Byte, Instrucao> instrucoes) throws PosicaoMemoriaInvalida, InstrucaoInvalidaException {

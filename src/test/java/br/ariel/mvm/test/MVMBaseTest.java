@@ -3,7 +3,6 @@ package br.ariel.mvm.test;
 import org.junit.Before;
 
 import br.ariel.mvm.controller.MVMController;
-import br.ariel.mvm.controller.ProcessadorController;
 import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
 import br.ariel.mvm.model.Instrucao;
 import br.ariel.mvm.model.Memoria;
@@ -18,7 +17,6 @@ public class MVMBaseTest {
 
 	protected short idx;
 
-	protected ProcessadorController processadorController;
 	protected MVMController mvmController;
 
 	@Before
@@ -27,7 +25,6 @@ public class MVMBaseTest {
 		processador = new Processador();
 		memoria = new Memoria((short) 512);
 
-		processadorController = new ProcessadorController();
 		mvmController = new MVMController();
 
 		processador.setIp((short) 0);
