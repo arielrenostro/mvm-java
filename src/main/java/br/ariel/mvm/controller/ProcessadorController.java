@@ -6,10 +6,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import br.ariel.mvm.exception.InstrucaoInvalidaException;
-import br.ariel.mvm.exception.MemoriaSemTamanhoException;
+import br.ariel.mvm.exception.MVMException;
 import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
-import br.ariel.mvm.exception.SemMemoriaException;
-import br.ariel.mvm.exception.SemProcessadorException;
 import br.ariel.mvm.model.Instrucao;
 import br.ariel.mvm.model.Memoria;
 import br.ariel.mvm.model.Monitor;
@@ -20,10 +18,7 @@ import br.ariel.mvm.model.Processador;
  */
 public class ProcessadorController {
 
-	public void processar(Processador processador, Memoria memoria, Monitor monitor) throws SemProcessadorException, SemMemoriaException, MemoriaSemTamanhoException, PosicaoMemoriaInvalida, InterruptedException, InstrucaoInvalidaException {
-		validarProcessar(processador, memoria);
-		definirRegistradores(processador, memoria);
-
+	public void processar(Processador processador, Memoria memoria, Monitor monitor) throws MVMException, InterruptedException {
 		Map<Byte, Instrucao> instrucoes = carregarInstrucoes();
 		Instrucao instrucao = null;
 
@@ -33,17 +28,11 @@ public class ProcessadorController {
 		}
 	}
 
-	public void definirRegistradores(Processador processador, Memoria memoria) {
-		short ultimoIdxMemoria = (short) (memoria.getTamanho() - 1);
-		processador.setSp(ultimoIdxMemoria);
-		processador.setBp(ultimoIdxMemoria);
-	}
-
 	private Map<Byte, Instrucao> carregarInstrucoes() {
 		return Stream.of(Instrucao.values()).collect(Collectors.toMap(Instrucao::getCode, Function.identity()));
 	}
 
-	private void executarInstrucao(Processador processador, Memoria memoria, Monitor monitor, Instrucao instrucao) throws PosicaoMemoriaInvalida, InterruptedException {
+	private void executarInstrucao(Processador processador, Memoria memoria, Monitor monitor, Instrucao instrucao) throws MVMException, InterruptedException {
 		if (Instrucao.INIT_AX.equals(instrucao)) {
 			processador.setAx((short) 0);
 
@@ -99,7 +88,6 @@ public class ProcessadorController {
 			byte high = memoria.getData(processador.incIp());
 			short idx = concatenarBytes(high, low);
 			idx += processador.getBp();
-
 
 			low = memoria.getData(idx++);
 			high = memoria.getData(idx);
@@ -332,10 +320,38 @@ public class ProcessadorController {
 			processador.setBp(processador.getAx());
 
 		} else if (Instrucao.IRET.equals(instrucao)) {
-			executarInstrucao(processador, memoria, monitor, Instrucao.RET); // TODO Implementar o IRET
+			// //"pop cx"
+			// //"pop bx"
+			// //"pop ax"
+			// //"pop bp"
+			// //"ret"
+
+			executarInstrucao(processador, memoria, monitor, Instrucao.POP_CX);
+			executarInstrucao(processador, memoria, monitor, Instrucao.POP_BX);
+			executarInstrucao(processador, memoria, monitor, Instrucao.POP_AX);
+			executarInstrucao(processador, memoria, monitor, Instrucao.POP_BP);
+			executarInstrucao(processador, memoria, monitor, Instrucao.RET);
 
 		} else if (Instrucao.INT.equals(instrucao)) {
-			executarInstrucao(processador, memoria, monitor, Instrucao.JMP); // TODO Implementar o INT
+			// //"push ip"
+			// //"push bp"
+			// //"push ax"
+			// //"push bx"
+			// //"push cx"
+			// //"int"
+			short idxInt = processador.incIp();
+
+			short idxProximoIp = processador.incIp();
+			short idxSp = processador.getSp();
+			memoria.setData(idxSp--, (byte) (idxProximoIp & 0x00FF));
+			memoria.setData(idxSp--, (byte) (idxProximoIp & 0xFF00));
+
+			processador.setSp(idxSp);
+			processador.setIp(idxInt);
+			executarInstrucao(processador, memoria, monitor, Instrucao.PUSH_BP);
+			executarInstrucao(processador, memoria, monitor, Instrucao.PUSH_AX);
+			executarInstrucao(processador, memoria, monitor, Instrucao.PUSH_BX);
+			executarInstrucao(processador, memoria, monitor, Instrucao.PUSH_CX);
 
 		} else if (Instrucao.INC_BP.equals(instrucao)) {
 			processador.setBp((short) (processador.getBp() + 1));
@@ -370,10 +386,4 @@ public class ProcessadorController {
 		return instrucao;
 	}
 
-	private void validarProcessar(Processador processador, Memoria memoria) throws SemProcessadorException, SemMemoriaException, MemoriaSemTamanhoException {
-		if (null == processador) {
-			throw new SemProcessadorException();
-		}
-
-	}
 }

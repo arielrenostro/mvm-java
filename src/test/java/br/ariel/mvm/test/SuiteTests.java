@@ -10,7 +10,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ MemoriaTest.class, //
 		MonitorTest.class, //
-		ProcessadorTest.class })
+		ProcessadorTest.class, //
+		BIOSTest.class })
 public class SuiteTests {
 
 }

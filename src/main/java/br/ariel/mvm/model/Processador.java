@@ -10,8 +10,8 @@ public class Processador {
 	private short cx = (short) 0x0000;
 
 	private short ip = (short) 0x0000;
-	private short bp = (short) 0x7FFE;
-	private short sp = (short) 0x7FFE;
+	private short bp = (short) 0x0000;
+	private short sp = (short) 0x0000;
 
 	public Processador() {
 		super();

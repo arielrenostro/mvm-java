@@ -1,6 +1,6 @@
 package br.ariel.mvm.exception;
 
-public class PosicaoMemoriaInvalida extends Exception {
+public class PosicaoMemoriaInvalida extends MVMException {
 
 	private static final long serialVersionUID = 8432317558796267407L;
 

@@ -1,6 +1,6 @@
 package br.ariel.mvm.exception;
 
-public class InstrucaoInvalidaException extends Exception {
+public class InstrucaoInvalidaException extends MVMException {
 
 	private static final long serialVersionUID = 7181444248445951127L;
 
