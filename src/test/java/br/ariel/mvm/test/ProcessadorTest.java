@@ -4,19 +4,19 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.ariel.mvm.exception.MVMException;
-import br.ariel.mvm.model.Instrucao;
+import br.ariel.mvm.model.InstrucaoProcessador;
 
 public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testeMovAxBx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x14);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_BX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -29,14 +29,14 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testeMovAxCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x14);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_CX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -49,18 +49,18 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testePopAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x15);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x34);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.PUSH_AX);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.POP_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.PUSH_AX);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.POP_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -73,16 +73,16 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testPushAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x15);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x0A);
 		adicionarInstrucao(0xF0);
-		adicionarInstrucao(Instrucao.PUSH_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.PUSH_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -97,8 +97,8 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testInitAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -111,12 +111,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testInitAx2() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x0A);
 		adicionarInstrucao(0xF0);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -129,12 +129,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovBxAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x14);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -147,12 +147,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovCxAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x14);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -165,10 +165,10 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovAxMem() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_MEM);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_MEM);
 		adicionarInstrucao(0x18);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		memoria.setData((short) 0x18, (byte) 0x10);
 		memoria.setData((short) 0x19, (byte) 0x11);
@@ -184,14 +184,14 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovAxMemBxP() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x01);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_MEM_BX_P);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_MEM_BX_P);
 		adicionarInstrucao(0x18);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		memoria.setData((short) 0x19, (byte) 0x10);
 		memoria.setData((short) 0x1A, (byte) 0x11);
@@ -207,14 +207,14 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovAxMemBpS() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x01);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_MEM_BP_S);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_MEM_BP_S);
 		adicionarInstrucao(0x18);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		memoria.setData((short) 0x17, (byte) 0x10);
 		memoria.setData((short) 0x18, (byte) 0x11);
@@ -230,14 +230,14 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovAxMemBpP() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x01);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_MEM_BP_P);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_MEM_BP_P);
 		adicionarInstrucao(0x18);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		memoria.setData((short) 0x19, (byte) 0x10);
 		memoria.setData((short) 0x1A, (byte) 0x11);
@@ -253,13 +253,13 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovMemAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x52);
 		adicionarInstrucao(0xAE);
-		adicionarInstrucao(Instrucao.MOV_MEM_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_MEM_AX);
 		adicionarInstrucao(0x18);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -275,14 +275,14 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovMemBxPAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x01);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.MOV_MEM_BX_P_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_MEM_BX_P_AX);
 		adicionarInstrucao(0x18);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -298,13 +298,13 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovBpSp() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_BP_SP);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_SP);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -317,13 +317,13 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testMovSpBp() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.MOV_BP_AX);
-		adicionarInstrucao(Instrucao.MOV_SP_BP);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_BP);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -336,15 +336,15 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testAddAxBx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x00);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.ADD_AX_BX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.ADD_AX_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -357,15 +357,15 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testAddAxCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x00);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.ADD_AX_CX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.ADD_AX_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -378,17 +378,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testAddBxCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x00);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.ADD_BX_CX);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.ADD_BX_CX);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -401,15 +401,15 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testSubAxBx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x00);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.SUB_AX_BX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.SUB_AX_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -422,15 +422,15 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testSubAxCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x00);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.SUB_AX_CX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.SUB_AX_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -443,17 +443,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testSubBxCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x00);
 		adicionarInstrucao(0x12);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.SUB_BX_CX);
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.SUB_BX_CX);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -466,11 +466,11 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testIncAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -483,12 +483,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testIncBx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.INC_BX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -501,12 +501,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testIncCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.INC_CX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -519,11 +519,11 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testDecAx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.DEC_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.DEC_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -536,12 +536,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testDecBx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.DEC_BX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.DEC_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -554,12 +554,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testDecCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.DEC_CX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.DEC_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -572,12 +572,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testIncBp() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BP_AX);
-		adicionarInstrucao(Instrucao.INC_BP);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_BP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -590,12 +590,12 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testDecBp() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xE5);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BP_AX);
-		adicionarInstrucao(Instrucao.DEC_BP);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.DEC_BP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -608,17 +608,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testTestAx0() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.TEST_AX_0);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.TEST_AX_0);
 		adicionarInstrucao(0x0A);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -632,19 +632,19 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testTestAx0_2() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x01);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.TEST_AX_0);
+		adicionarInstrucao(InstrucaoProcessador.TEST_AX_0);
 		adicionarInstrucao(0x0A);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -658,17 +658,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testJmp() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.JMP);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.JMP);
 		adicionarInstrucao(0x0A);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -682,17 +682,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testJmp_2() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.INIT_AX);
-		adicionarInstrucao(Instrucao.JMP);
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.JMP);
 		adicionarInstrucao(0x08);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -706,15 +706,15 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testCall() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xFF);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.CALL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.CALL);
 		adicionarInstrucao(0x08);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -728,17 +728,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testRet() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xFF);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.CALL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.CALL);
 		adicionarInstrucao(0x09);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.INC_BX);
-		adicionarInstrucao(Instrucao.HALT);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.RET);
+		adicionarInstrucao(InstrucaoProcessador.INC_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.RET);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -752,16 +752,16 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testPushBx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xFF);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x09);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.PUSH_BX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.PUSH_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -778,16 +778,16 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testPushCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xFF);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x09);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.PUSH_CX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.PUSH_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -804,16 +804,16 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testPushBp() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xFF);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x09);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BP_AX);
-		adicionarInstrucao(Instrucao.PUSH_BP);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.PUSH_BP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -830,17 +830,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testPopBp() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xFF);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x09);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BP_AX);
-		adicionarInstrucao(Instrucao.PUSH_BP);
-		adicionarInstrucao(Instrucao.POP_BP);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.PUSH_BP);
+		adicionarInstrucao(InstrucaoProcessador.POP_BP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -857,17 +857,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testPopBx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xFF);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x09);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_BX_AX);
-		adicionarInstrucao(Instrucao.PUSH_BX);
-		adicionarInstrucao(Instrucao.POP_BX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.PUSH_BX);
+		adicionarInstrucao(InstrucaoProcessador.POP_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -884,17 +884,17 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testPopCx() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0xFF);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_SP_AX);
-		adicionarInstrucao(Instrucao.MOV_AX_LITERAL);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
 		adicionarInstrucao(0x09);
 		adicionarInstrucao(0x00);
-		adicionarInstrucao(Instrucao.MOV_CX_AX);
-		adicionarInstrucao(Instrucao.PUSH_CX);
-		adicionarInstrucao(Instrucao.POP_CX);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_CX_AX);
+		adicionarInstrucao(InstrucaoProcessador.PUSH_CX);
+		adicionarInstrucao(InstrucaoProcessador.POP_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -911,8 +911,8 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testNop() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.NOP);
-		adicionarInstrucao(Instrucao.HALT);
+		adicionarInstrucao(InstrucaoProcessador.NOP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -926,9 +926,9 @@ public class ProcessadorTest extends MVMBaseTest {
 
 	@Test
 	public void testHalt() throws MVMException, InterruptedException {
-		adicionarInstrucao(Instrucao.HALT);
-		adicionarInstrucao(Instrucao.INC_AX);
-		adicionarInstrucao(Instrucao.INC_BX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_BX);
 
 		mvmController.iniciar(processador, memoria, monitor);
 
@@ -940,19 +940,232 @@ public class ProcessadorTest extends MVMBaseTest {
 		Assert.assertEquals((short) 0x0001, processador.getIp());
 	}
 
-	// DEC_SP((byte) 0b00101001), //
-	//
-	// MOV_MEN_BP_S_AX((byte) 0b00101010), //
-	// MOV_MEN_BP_P_AX((byte) 0b00101011), //
-	// MOV_AX_LITERAL((byte) 0b00101100), //
-	// TEST_AX_BX((byte) 0b00101101), //
-	// INC_SP((byte) 0b00101110), //
-	//
-	// MOV_AX_SP((byte) 0b00101111), //
-	// MOV_SP_AX((byte) 0b00110000), //
-	// MOV_AX_BP((byte) 0b00110001), //
-	// MOV_BP_AX((byte) 0b00110010), //
-	//
+	@Test
+	public void testDecSp() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.DEC_SP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x0003, processador.getAx());
+		Assert.assertEquals((short) 0, processador.getBx());
+		Assert.assertEquals((short) 0, processador.getCx());
+		Assert.assertEquals((short) 0, processador.getBp());
+		Assert.assertEquals((short) 0x0002, processador.getSp());
+		Assert.assertEquals((short) 0x0007, processador.getIp());
+	}
+
+	@Test
+	public void testIncSp() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.INIT_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.INC_SP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x0003, processador.getAx());
+		Assert.assertEquals((short) 0, processador.getBx());
+		Assert.assertEquals((short) 0, processador.getCx());
+		Assert.assertEquals((short) 0, processador.getBp());
+		Assert.assertEquals((short) 0x0004, processador.getSp());
+		Assert.assertEquals((short) 0x0007, processador.getIp());
+	}
+
+	@Test
+	public void testAxLiteral() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(0xFF);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x00FF, processador.getAx());
+		Assert.assertEquals((short) 0, processador.getBx());
+		Assert.assertEquals((short) 0, processador.getCx());
+		Assert.assertEquals((short) 0, processador.getBp());
+		Assert.assertEquals((short) 0x0000, processador.getSp());
+		Assert.assertEquals((short) 0x0004, processador.getIp());
+	}
+
+	@Test
+	public void testMemBpSAx() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(0xFF);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(0xFF);
+		adicionarInstrucao(0x02);
+		adicionarInstrucao(InstrucaoProcessador.MOV_MEM_BP_S_AX);
+		adicionarInstrucao(0x01);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x02FF, processador.getAx());
+		Assert.assertEquals((short) 0, processador.getBx());
+		Assert.assertEquals((short) 0, processador.getCx());
+		Assert.assertEquals((short) 0x00FF, processador.getBp());
+		Assert.assertEquals((short) 0x0000, processador.getSp());
+		Assert.assertEquals((short) 0x000B, processador.getIp());
+
+		Assert.assertEquals((byte) 0xFF, memoria.getData((short) 0x00FE));
+		Assert.assertEquals((byte) 0x02, memoria.getData((short) 0x00FF));
+	}
+
+	@Test
+	public void testMemBpPAx() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(0xFF);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(0xFF);
+		adicionarInstrucao(0x02);
+		adicionarInstrucao(InstrucaoProcessador.MOV_MEM_BP_P_AX);
+		adicionarInstrucao(0x01);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x02FF, processador.getAx());
+		Assert.assertEquals((short) 0, processador.getBx());
+		Assert.assertEquals((short) 0, processador.getCx());
+		Assert.assertEquals((short) 0x00FF, processador.getBp());
+		Assert.assertEquals((short) 0x0000, processador.getSp());
+		Assert.assertEquals((short) 0x000B, processador.getIp());
+
+		Assert.assertEquals((byte) 0xFF, memoria.getData((short) 0x0100));
+		Assert.assertEquals((byte) 0x02, memoria.getData((short) 0x0101));
+	}
+
+	@Test
+	public void testTestAxBx1() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(0xFF);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(0xFF);
+		adicionarInstrucao(0x02);
+		adicionarInstrucao(InstrucaoProcessador.TEST_AX_BX);
+		adicionarInstrucao(0x0D);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.INC_CX);
+		adicionarInstrucao(InstrucaoProcessador.INC_CX);
+		adicionarInstrucao(InstrucaoProcessador.INC_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x02FF, processador.getAx());
+		Assert.assertEquals((short) 0x00FF, processador.getBx());
+		Assert.assertEquals((short) 0x0003, processador.getCx());
+		Assert.assertEquals((short) 0x0000, processador.getBp());
+		Assert.assertEquals((short) 0x0000, processador.getSp());
+		Assert.assertEquals((short) 0x000E, processador.getIp());
+	}
+
+	@Test
+	public void testTestAxBx2() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(0xFF);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BX_AX);
+		adicionarInstrucao(InstrucaoProcessador.TEST_AX_BX);
+		adicionarInstrucao(0x0A);
+		adicionarInstrucao(0x00);
+		adicionarInstrucao(InstrucaoProcessador.INC_CX);
+		adicionarInstrucao(InstrucaoProcessador.INC_CX);
+		adicionarInstrucao(InstrucaoProcessador.INC_CX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x00FF, processador.getAx());
+		Assert.assertEquals((short) 0x00FF, processador.getBx());
+		Assert.assertEquals((short) 0x0000, processador.getCx());
+		Assert.assertEquals((short) 0x0000, processador.getBp());
+		Assert.assertEquals((short) 0x0000, processador.getSp());
+		Assert.assertEquals((short) 0x000B, processador.getIp());
+	}
+
+	@Test
+	public void testMovAxSp() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.INC_SP);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_SP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x0001, processador.getAx());
+		Assert.assertEquals((short) 0x0000, processador.getBx());
+		Assert.assertEquals((short) 0x0000, processador.getCx());
+		Assert.assertEquals((short) 0x0000, processador.getBp());
+		Assert.assertEquals((short) 0x0001, processador.getSp());
+		Assert.assertEquals((short) 0x0003, processador.getIp());
+	}
+
+	@Test
+	public void testMovSpAx() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x0001, processador.getAx());
+		Assert.assertEquals((short) 0x0000, processador.getBx());
+		Assert.assertEquals((short) 0x0000, processador.getCx());
+		Assert.assertEquals((short) 0x0000, processador.getBp());
+		Assert.assertEquals((short) 0x0001, processador.getSp());
+		Assert.assertEquals((short) 0x0003, processador.getIp());
+	}
+
+	@Test
+	public void testMovAxBp() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.INC_BP);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_BP);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x0001, processador.getAx());
+		Assert.assertEquals((short) 0x0000, processador.getBx());
+		Assert.assertEquals((short) 0x0000, processador.getCx());
+		Assert.assertEquals((short) 0x0001, processador.getBp());
+		Assert.assertEquals((short) 0x0000, processador.getSp());
+		Assert.assertEquals((short) 0x0003, processador.getIp());
+	}
+
+	@Test
+	public void testMovBpAx() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x0001, processador.getAx());
+		Assert.assertEquals((short) 0x0000, processador.getBx());
+		Assert.assertEquals((short) 0x0000, processador.getCx());
+		Assert.assertEquals((short) 0x0001, processador.getBp());
+		Assert.assertEquals((short) 0x0000, processador.getSp());
+		Assert.assertEquals((short) 0x0003, processador.getIp());
+	}
+
 	// IRET((byte) 0b00110011), //
 	// INT((byte) 0b00110100), //
 	// IN_AX((byte) 0b00011101), //

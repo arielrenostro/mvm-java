@@ -100,4 +100,24 @@ public class Processador {
 	public byte getBph() {
 		return (byte) (((short) 0xFF00 & bp) >> 8);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName());
+		sb.append(" ax [");
+		sb.append(ax);
+		sb.append("] bx [");
+		sb.append(bx);
+		sb.append("] cx [");
+		sb.append(cx);
+		sb.append("] bp [");
+		sb.append(bp);
+		sb.append("] sp [");
+		sb.append(sp);
+		sb.append("] ip [");
+		sb.append(ip);
+		sb.append("]");
+		return sb.toString();
+	}
 }

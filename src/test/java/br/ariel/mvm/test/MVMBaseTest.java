@@ -4,7 +4,7 @@ import org.junit.Before;
 
 import br.ariel.mvm.controller.MVMController;
 import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
-import br.ariel.mvm.model.Instrucao;
+import br.ariel.mvm.model.InstrucaoProcessador;
 import br.ariel.mvm.model.Memoria;
 import br.ariel.mvm.model.Monitor;
 import br.ariel.mvm.model.Processador;
@@ -34,7 +34,7 @@ public class MVMBaseTest {
 		memoria.setData(idx++, (byte) b);
 	}
 
-	protected void adicionarInstrucao(Instrucao instrucao) throws PosicaoMemoriaInvalida {
+	protected void adicionarInstrucao(InstrucaoProcessador instrucao) throws PosicaoMemoriaInvalida {
 		adicionarInstrucao(instrucao.getCode());
 	}
 }

@@ -32,4 +32,25 @@ public class Memoria {
 	public short getTamanho() {
 		return (short) memoria.length;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName());
+		sb.append(" Tamanho [");
+		sb.append(getTamanho());
+		sb.append("] [");
+
+		for (short idx = 0; idx < memoria.length; idx++) {
+			sb.append(idx);
+			sb.append("=");
+			sb.append(memoria[idx]);
+			if (idx < memoria.length - 1) {
+				sb.append(", ");
+			}
+		}
+
+		sb.append("]");
+		return sb.toString();
+	}
 }

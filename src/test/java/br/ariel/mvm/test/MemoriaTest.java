@@ -1,7 +1,7 @@
 package br.ariel.mvm.test;
 
 import org.junit.Assert;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
 import br.ariel.mvm.model.Memoria;

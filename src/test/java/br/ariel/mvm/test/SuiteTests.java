@@ -8,8 +8,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author ariel
  */
 @RunWith(Suite.class)
-@SuiteClasses({ MemoriaTest.class, //
-		MonitorTest.class, //
+@SuiteClasses({ MonitorTest.class, //
+		MemoriaTest.class, //
 		ProcessadorTest.class, //
 		BIOSTest.class })
 public class SuiteTests {

@@ -3,7 +3,7 @@ package br.ariel.mvm.model;
 /**
  * @author ariel
  */
-public enum Instrucao {
+public enum InstrucaoProcessador {
 
 	INIT_AX((byte) 0b0000000), //
 	MOV_AX_BX((byte) 0b00000001), //
@@ -78,7 +78,7 @@ public enum Instrucao {
 
 	private byte code;
 
-	private Instrucao(byte code) {
+	private InstrucaoProcessador(byte code) {
 		this.code = code;
 	}
 

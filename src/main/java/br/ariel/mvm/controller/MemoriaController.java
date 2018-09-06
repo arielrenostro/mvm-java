@@ -1,15 +1,31 @@
 package br.ariel.mvm.controller;
 
+import java.io.IOException;
+
+import br.ariel.mvm.exception.MVMException;
 import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
 import br.ariel.mvm.model.Memoria;
-import br.ariel.mvm.model.bios.IBIOSMVM;
 
 public class MemoriaController {
 
-	public void carregarBios(Memoria memoria, IBIOSMVM bios) throws PosicaoMemoriaInvalida {
-		byte[] programaBios = bios.getBios();
-		for (int idx = 0; idx < programaBios.length; idx++) {
-			memoria.setData((short) idx, programaBios[idx]);
+	public Memoria criarMemoriaPorBios(String url) throws IOException, MVMException {
+		byte[] bios = new BiosController().carregarArquivoBios(url);
+		return criarMemoriaPorArray(bios);
+	}
+
+	private Memoria criarMemoriaPorArray(byte[] bios) throws PosicaoMemoriaInvalida {
+		Memoria memoria = new Memoria((short) bios.length);
+		for (short idx = 0; idx < bios.length; idx++) {
+			memoria.setData(idx, bios[idx]);
 		}
+		return memoria;
+	}
+
+	public byte[] extrairMemoriaEmArray(Memoria memoria) throws PosicaoMemoriaInvalida {
+		byte[] mem = new byte[memoria.getTamanho()];
+		for (int idx = 0; idx < memoria.getTamanho(); idx++) {
+			mem[idx] = memoria.getData((short) idx);
+		}
+		return mem;
 	}
 }
