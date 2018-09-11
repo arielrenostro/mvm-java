@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import br.ariel.mvm.controller.BiosController;
 import br.ariel.mvm.exception.MVMException;
-import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
+import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
 import br.ariel.mvm.model.InstrucaoProcessador;
 import br.ariel.mvm.model.Memoria;
 
@@ -51,11 +51,11 @@ public class GeradorBIOS {
 		new BiosController().carregarArquivoBios("/home/ariel/Temp/bios.bin");
 	}
 
-	private static void adicionarInstrucao(int b) throws PosicaoMemoriaInvalida {
+	private static void adicionarInstrucao(int b) throws PosicaoMemoriaInvalidaException {
 		memoria.setData(idx++, (byte) b);
 	}
 
-	private static void adicionarInstrucao(InstrucaoProcessador instrucao) throws PosicaoMemoriaInvalida {
+	private static void adicionarInstrucao(InstrucaoProcessador instrucao) throws PosicaoMemoriaInvalidaException {
 		adicionarInstrucao(instrucao.getCode());
 	}
 

@@ -1,6 +1,6 @@
 package br.ariel.mvm.model;
 
-import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
+import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
 
 /**
  * @author ariel
@@ -14,17 +14,17 @@ public class Memoria {
 		this.memoria = new byte[tamanho];
 	}
 
-	public byte getData(short idx) throws PosicaoMemoriaInvalida {
+	public byte getData(short idx) throws PosicaoMemoriaInvalidaException {
 		if (0 > idx || memoria.length <= idx) {
-			throw new PosicaoMemoriaInvalida(memoria.length, idx);
+			throw new PosicaoMemoriaInvalidaException(memoria.length, idx);
 		}
 
 		return memoria[idx];
 	}
 
-	public void setData(short idx, byte data) throws PosicaoMemoriaInvalida {
+	public void setData(short idx, byte data) throws PosicaoMemoriaInvalidaException {
 		if (0 > idx || memoria.length <= idx) {
-			throw new PosicaoMemoriaInvalida(memoria.length, idx);
+			throw new PosicaoMemoriaInvalidaException(memoria.length, idx);
 		}
 		this.memoria[idx] = data;
 	}

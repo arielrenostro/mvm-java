@@ -3,7 +3,7 @@ package br.ariel.mvm.controller;
 import java.io.IOException;
 
 import br.ariel.mvm.exception.MVMException;
-import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
+import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
 import br.ariel.mvm.model.Memoria;
 
 public class MemoriaController {
@@ -13,7 +13,7 @@ public class MemoriaController {
 		return criarMemoriaPorArray(bios);
 	}
 
-	private Memoria criarMemoriaPorArray(byte[] bios) throws PosicaoMemoriaInvalida {
+	private Memoria criarMemoriaPorArray(byte[] bios) throws PosicaoMemoriaInvalidaException {
 		Memoria memoria = new Memoria((short) bios.length);
 		for (short idx = 0; idx < bios.length; idx++) {
 			memoria.setData(idx, bios[idx]);
@@ -21,7 +21,7 @@ public class MemoriaController {
 		return memoria;
 	}
 
-	public byte[] extrairMemoriaEmArray(Memoria memoria) throws PosicaoMemoriaInvalida {
+	public byte[] extrairMemoriaEmArray(Memoria memoria) throws PosicaoMemoriaInvalidaException {
 		byte[] mem = new byte[memoria.getTamanho()];
 		for (int idx = 0; idx < memoria.getTamanho(); idx++) {
 			mem[idx] = memoria.getData((short) idx);

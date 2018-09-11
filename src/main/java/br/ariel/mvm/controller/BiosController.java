@@ -9,12 +9,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import br.ariel.mvm.exception.MVMException;
-import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
+import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
 import br.ariel.mvm.model.Memoria;
 
 public class BiosController {
 
-	public File gerarArquivoBios(String url, Memoria memoria) throws PosicaoMemoriaInvalida, IOException {
+	public File gerarArquivoBios(String url, Memoria memoria) throws PosicaoMemoriaInvalidaException, IOException {
 		byte[] mem = new MemoriaController().extrairMemoriaEmArray(memoria);
 		return gerarArquivoBios(url, mem);
 	}

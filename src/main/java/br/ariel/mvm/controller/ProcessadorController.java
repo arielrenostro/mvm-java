@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import br.ariel.mvm.exception.InstrucaoInvalidaException;
 import br.ariel.mvm.exception.MVMException;
-import br.ariel.mvm.exception.PosicaoMemoriaInvalida;
+import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
 import br.ariel.mvm.model.InstrucaoProcessador;
 import br.ariel.mvm.model.Memoria;
 import br.ariel.mvm.model.Monitor;
@@ -378,7 +378,7 @@ public class ProcessadorController {
 		return (short) ((high << 8) | (0xFF & low));
 	}
 
-	private InstrucaoProcessador proximaInstrucao(Processador processador, Memoria memoria, Map<Byte, InstrucaoProcessador> instrucoes) throws PosicaoMemoriaInvalida, InstrucaoInvalidaException {
+	private InstrucaoProcessador proximaInstrucao(Processador processador, Memoria memoria, Map<Byte, InstrucaoProcessador> instrucoes) throws PosicaoMemoriaInvalidaException, InstrucaoInvalidaException {
 		short ip = processador.incIp();
 		byte data = memoria.getData(ip);
 		InstrucaoProcessador instrucao = instrucoes.get(data);
