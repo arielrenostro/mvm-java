@@ -4,20 +4,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import br.ariel.mvm.exception.CaractereEsperadoCompiladorException;
 import br.ariel.mvm.exception.CompiladorException;
 import br.ariel.mvm.exception.SemEspacoMemoriaCompiladorException;
+import br.ariel.mvm.model.InstrucaoProcessador;
 import br.ariel.mvm.utils.Utils;
 
 public class CompiladorAssemblyMVM {
 
-	private static final String SP = "SP";
-	private static final String BP = "BP";
-	private static final String CX = "CX";
-	private static final String BX = "BX";
-	private static final String AX = "AX";
+	private static final Pattern PATTERN_NUMEROS = Pattern.compile("\\d+");
 
 	public byte[] compilar(String codigo) throws SemEspacoMemoriaCompiladorException {
 		validarCodigo(codigo);
@@ -47,7 +46,7 @@ public class CompiladorAssemblyMVM {
 		}
 
 		String comando = getComandoLinha(linha);
-		if (comando.toUpperCase().startsWith("MOV")) {
+		if (comando.equalsIgnoreCase("MOV")) {
 			processarComandoMOV(linhaInstrucao, linha, comando);
 		}
 
@@ -58,63 +57,97 @@ public class CompiladorAssemblyMVM {
 		linha = removerComando(linha, comando);
 		linha = linha.toUpperCase();
 
+		String primeiroParametro = getPrimeiroParametro(linha);
+		String segundoParametro = getSegundoParametro(linhaInstrucao, linha);
+
+		if (Utils.isEmpty(primeiroParametro) || Utils.isEmpty(segundoParametro)) {
+			throw new CompiladorException("MOV inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		StringBuilder enumSB = new StringBuilder();
+		enumSB.append("MOV_");
+		adicionarParametroEnumMOV(enumSB, primeiroParametro);
+		enumSB.append("_");
+		adicionarParametroEnumMOV(enumSB, segundoParametro);
+
+		InstrucaoProcessador instrucao = InstrucaoProcessador.valueOf(enumSB.toString());
+		if (null == instrucao) {
+			throw new CompiladorException("MOV inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		definirInstrucaoMOV(linhaInstrucao, instrucao, primeiroParametro, segundoParametro);
+	}
+
+	private void definirInstrucaoMOV(LinhaInstrucao linhaInstrucao, InstrucaoProcessador instrucao, String primeiroParametro, String segundoParametro) throws CompiladorException {
+		if (instrucao.name().contains("MEM")) {
+			short valor = getValorParametrosMOV(primeiroParametro, segundoParametro);
+			byte[] bytesValor = quebrarBytesValor(valor);
+		}
+	}
+
+	private byte[] quebrarBytesValor(short valor) { // TODO ARIEL -> CONTINUAR
+		return;
+	}
+
+	private short getValorParametrosMOV(String primeiroParametro, String segundoParametro) throws CompiladorException {
+		Matcher matcher = PATTERN_NUMEROS.matcher(primeiroParametro);
+		if (!matcher.find()) {
+			matcher = PATTERN_NUMEROS.matcher(segundoParametro);
+		}
+		if (!matcher.find()) {
+			throw new CompiladorException("Erro inesperado ao pegar o valor dos parâmetros do MOV");
+		}
+
+		String valor = matcher.group();
+		return Short.valueOf(valor);
+	}
+
+	private void adicionarParametroEnumMOV(StringBuilder enumSB, String parametro) {
+		StringBuilder parametroSB = new StringBuilder();
+		if (parametro.matches("[a-zA-Z]+")) { // Inicia com letras
+			parametroSB.append(parametro);
+		} else if (parametro.matches("\\{\\d*\\}")) { // É do tipo {1234}
+			parametroSB.append("LITERAL");
+		} else if (parametro.matches("\\[\\d*\\]")) { // É do tipo [1234]
+			parametroSB.append("MEM");
+		} else if (parametro.matches("\\[(BX|BP|Bp|Bx|bP|bX|bp|bx)\\s*\\+\\s*\\d*\\]")) { // É do tipo [BX/BP + 4]
+			String registrador = parametro.contains("BP") ? "BP" : "BX";
+			parametroSB.append("MEM_");
+			parametroSB.append(registrador);
+			parametroSB.append("_P");
+		} else if (parametro.matches("\\[(BX|BP|Bp|Bx|bP|bX|bp|bx)\\s*\\-\\s*\\d*\\]")) { // É do tipo [BX/BP - 4]
+			String registrador = parametro.contains("BP") ? "BP" : "BX";
+			parametroSB.append("MEM_");
+			parametroSB.append(registrador);
+			parametroSB.append("_S");
+		}
+
+		enumSB.append(parametroSB);
+	}
+
+	private void validarExistenciaVirgula(LinhaInstrucao linhaInstrucao, String linha) throws CaractereEsperadoCompiladorException {
 		if (-1 == linha.indexOf(',')) {
 			throw new CaractereEsperadoCompiladorException(linhaInstrucao.getIdxLinha(), ",");
 		}
-
-		String primeiroParametro = getPrimeiroParametroMOV(linhaInstrucao, linha);
-		String segundoParametro = getSegundoParametroMOV(linhaInstrucao, linha);
-
-		switch (primeiroParametro) {
-		case AX:
-			// TODO CONTINUAR
-		}
 	}
 
-	private String getSegundoParametroMOV(LinhaInstrucao linhaInstrucao, String linha) throws CompiladorException {
-		linha = linha.substring(linha.indexOf(",")).trim(); // TODO VALIDAR
-		try {
-			return getPrimeiroParametroMOV(linhaInstrucao, linha);
-		} catch (CompiladorException e) {
-			if (linha.startsWith("{")) {
-				int idxFechaChaves = linha.indexOf("}");
-				if (-1 == idxFechaChaves) {
-					throw new CaractereEsperadoCompiladorException(linhaInstrucao.getIdxLinha(), "}");
-				}
-				String parametro = linha.substring(1, idxFechaChaves);
-				if (Utils.isEmpty(parametro) || Utils.isNotNumber(parametro)) {
-					throw new CompiladorException("Esperado um número na linha [" + linhaInstrucao.getIdxLinha() + "]");
-				}
-				return parametro;
-			}
-			throw e;
-		}
+	private String getSegundoParametro(LinhaInstrucao linhaInstrucao, String linha) throws CompiladorException {
+		validarExistenciaVirgula(linhaInstrucao, linha);
+		int idxVirgula = linha.indexOf(",");
+		return linha.substring(idxVirgula).trim();
 	}
 
-	private String getPrimeiroParametroMOV(LinhaInstrucao linhaInstrucao, String linha) throws CompiladorException {
-		if (linha.startsWith(AX)) {
-			return AX;
-		} else if (linha.startsWith(BX)) {
-			return BX;
-		} else if (linha.startsWith(CX)) {
-			return CX;
-		} else if (linha.startsWith(BP)) {
-			return BP;
-		} else if (linha.startsWith(SP)) {
-			return SP;
-		} else if (linha.startsWith("[")) {
-			int idxFechaColchete = linha.indexOf("]");
-			if (-1 == idxFechaColchete) {
-				throw new CaractereEsperadoCompiladorException(linhaInstrucao.getIdxLinha(), "]");
-			}
-			String parametro = linha.substring(1, idxFechaColchete);
-			if (Utils.isEmpty(parametro) || Utils.isNotNumber(parametro)) {
-				throw new CompiladorException("Esperado um número na linha [" + linhaInstrucao.getIdxLinha() + "]");
-			}
-			return parametro;
-		} else {
-			throw new CompiladorException("Esperado um registrador ou indice de memória na linha [" + linhaInstrucao.getIdxLinha() + "]");
+	private String getPrimeiroParametro(String linha) throws CompiladorException {
+		int idxVirgula = linha.indexOf(",");
+		if (-1 == idxVirgula) {
+			idxVirgula = linha.length();
 		}
+
+		int idxInstrucao = linha.indexOf(" ");
+		if (idxVirgula < idxInstrucao || -1 == idxInstrucao) {
+			idxInstrucao = 0;
+		}
+		return linha.substring(idxInstrucao, idxVirgula); // TODO VALIDAR
 	}
 
 	private String removerComando(String linha, String comando) {

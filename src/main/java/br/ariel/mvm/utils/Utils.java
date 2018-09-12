@@ -12,4 +12,8 @@ public class Utils {
 		}
 		return false; // TODO IMPLEMENTAR
 	}
+
+	public static boolean isNumber(String str) {
+		return !isNotNumber(str);
+	}
 }
