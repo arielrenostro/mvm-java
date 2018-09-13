@@ -18,6 +18,13 @@ public class CompiladorAssemblyMVM {
 
 	private static final Pattern PATTERN_NUMEROS = Pattern.compile("\\d+");
 
+	private static final String MOV = "MOV";
+	private static final String INIT = "INIT";
+	private static final String ADD = "ADD";
+	private static final String SUB = "SUB";
+	private static final String INC = "INC";
+	private static final String DEC = "DEC";
+
 	public byte[] compilar(String codigo) throws SemEspacoMemoriaCompiladorException {
 		validarCodigo(codigo);
 		List<String> linhasCodigo = getLinhasCodigo(codigo);
@@ -46,15 +53,183 @@ public class CompiladorAssemblyMVM {
 		}
 
 		String comando = getComandoLinha(linha);
-		if (comando.equalsIgnoreCase("MOV")) {
+		linha = removerComando(linha, comando);
+		switch (comando) {
+		case MOV:
 			processarComandoMOV(linhaInstrucao, linha, comando);
+			break;
+		case INIT:
+			processarComandoINIT(linhaInstrucao, linha, comando);
+			break;
+		case ADD:
+			processarComandoADD(linhaInstrucao, linha, comando);
+			break;
+		case SUB:
+			processarComandoSUB(linhaInstrucao, linha, comando);
+			break;
+		case INC:
+			processarComandoINC(linhaInstrucao, linha, comando);
+			break;
+		case DEC:
+			processarComandoDEC(linhaInstrucao, linha, comando);
+			break;
+		case JMP:
+			processarComandoJMP(linhaInstrucao, linha, comando);
+			break;
+		case TEST:
+			processarComandoTEST(linhaInstrucao, linha, comando);
+			break;
+		case CALL:
+			processarComandoCALL(linhaInstrucao, linha, comando);
+			break;
+		case RET:
+			processarComandoRET(linhaInstrucao, linha, comando);
+			break;
+		case IN:
+			processarComandoIN(linhaInstrucao, linha, comando);
+			break;
+		case OUT:
+			processarComandoOUT(linhaInstrucao, linha, comando);
+			break;
+		case PUSH:
+			processarComandoPUSH(linhaInstrucao, linha, comando);
+			break;
+		case POP:
+			processarComandoPOP(linhaInstrucao, linha, comando);
+			break;
+		case NOP:
+			processarComandoNOP(linhaInstrucao, linha, comando);
+			break;
+		case HALT:
+			processarComandoHALT(linhaInstrucao, linha, comando);
+			break;
+		case IRET:
+			processarComandoIRET(linhaInstrucao, linha, comando);
+			break;
+		case INT:
+			processarComandoINT(linhaInstrucao, linha, comando);
+			break;
+		default:
+			processarLabel(linhaInstrucao, linha, comando);
 		}
 
 		// TODO IMPLEMENTAR
 	}
 
+	private void processarComandoDEC(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		linha = linha.toUpperCase();
+
+		String primeiroParametro = getPrimeiroParametro(linha);
+		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
+			throw new CompiladorException("DEC inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		StringBuilder enumSB = new StringBuilder();
+		enumSB.append("DEC_");
+		enumSB.append(primeiroParametro);
+
+		InstrucaoProcessador instrucao = InstrucaoProcessador.valueOf(enumSB.toString());
+		if (null == instrucao) {
+			throw new CompiladorException("DEC inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
+	}
+
+	private void processarComandoINC(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		linha = linha.toUpperCase();
+
+		String primeiroParametro = getPrimeiroParametro(linha);
+		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
+			throw new CompiladorException("INC inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		StringBuilder enumSB = new StringBuilder();
+		enumSB.append("INC_");
+		enumSB.append(primeiroParametro);
+
+		InstrucaoProcessador instrucao = InstrucaoProcessador.valueOf(enumSB.toString());
+		if (null == instrucao) {
+			throw new CompiladorException("INC inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
+	}
+
+	private void processarLabel(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		if (Utils.isNotEmpty(linha)) {
+			throw new CompiladorException("Label ou comando inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		if (!comando.endsWith(":")) {
+			throw new CompiladorException("Esperado ':' no final da label da linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		linhaInstrucao.setLabel(comando);
+		linhaInstrucao.setEhLabel(true);
+	}
+
+	private void processarComandoSUB(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		linha = linha.toUpperCase();
+
+		String primeiroParametro = getPrimeiroParametro(linha);
+		String segundoParametro = getSegundoParametro(linhaInstrucao, linha);
+
+		if (Utils.isEmpty(primeiroParametro) || Utils.isEmpty(segundoParametro)) {
+			throw new CompiladorException("SUB inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		StringBuilder enumSB = new StringBuilder();
+		enumSB.append("SUB_");
+		enumSB.append(primeiroParametro);
+		enumSB.append("_");
+		enumSB.append(segundoParametro);
+
+		InstrucaoProcessador instrucao = InstrucaoProcessador.valueOf(enumSB.toString());
+		if (null == instrucao) {
+			throw new CompiladorException("SUB inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
+	}
+
+	private void processarComandoADD(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		linha = linha.toUpperCase();
+
+		String primeiroParametro = getPrimeiroParametro(linha);
+		String segundoParametro = getSegundoParametro(linhaInstrucao, linha);
+
+		if (Utils.isEmpty(primeiroParametro) || Utils.isEmpty(segundoParametro)) {
+			throw new CompiladorException("ADD inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		StringBuilder enumSB = new StringBuilder();
+		enumSB.append("ADD_");
+		enumSB.append(primeiroParametro);
+		enumSB.append("_");
+		enumSB.append(segundoParametro);
+
+		InstrucaoProcessador instrucao = InstrucaoProcessador.valueOf(enumSB.toString());
+		if (null == instrucao) {
+			throw new CompiladorException("ADD inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
+	}
+
+	private void processarComandoINIT(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		linha = linha.toUpperCase();
+
+		if (!"AX".equalsIgnoreCase(linha)) {
+			throw new CompiladorException("Esperado um INIT AX na linha [" + linhaInstrucao.getIdxLinha() + "]");
+		}
+
+		linhaInstrucao.setInstrucao(new byte[] { InstrucaoProcessador.INIT_AX.getCode() });
+	}
+
 	private void processarComandoMOV(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
-		linha = removerComando(linha, comando);
 		linha = linha.toUpperCase();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
@@ -82,11 +257,17 @@ public class CompiladorAssemblyMVM {
 		if (instrucao.name().contains("MEM")) {
 			short valor = getValorParametrosMOV(primeiroParametro, segundoParametro);
 			byte[] bytesValor = quebrarBytesValor(valor);
+			byte[] bytesInstrucoes = new byte[] { instrucao.getCode(), bytesValor[0], bytesValor[1] };
+			linhaInstrucao.setInstrucao(bytesInstrucoes);
+		} else {
+			linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
 		}
 	}
 
-	private byte[] quebrarBytesValor(short valor) { // TODO ARIEL -> CONTINUAR
-		return;
+	private byte[] quebrarBytesValor(short valor) {
+		byte byte1 = (byte) (valor & 0x00FF);
+		byte byte2 = (byte) (valor & 0xFF00);
+		return new byte[] { byte1, byte2 };
 	}
 
 	private short getValorParametrosMOV(String primeiroParametro, String segundoParametro) throws CompiladorException {
@@ -159,7 +340,7 @@ public class CompiladorAssemblyMVM {
 		if (Utils.isEmpty(comando)) {
 			comando = linha;
 		}
-		return comando;
+		return comando.toUpperCase().trim();
 	}
 
 	private void validarTamanhoInstrucoes(List<LinhaInstrucao> linhasInstrucao) throws SemEspacoMemoriaCompiladorException {

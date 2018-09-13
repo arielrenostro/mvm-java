@@ -16,4 +16,8 @@ public class Utils {
 	public static boolean isNumber(String str) {
 		return !isNotNumber(str);
 	}
+
+	public static boolean isNotEmpty(String str) {
+		return !isEmpty(str);
+	}
 }
