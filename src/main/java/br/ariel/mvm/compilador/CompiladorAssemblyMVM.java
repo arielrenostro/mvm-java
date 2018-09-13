@@ -24,6 +24,7 @@ public class CompiladorAssemblyMVM {
 	private static final String SUB = "SUB";
 	private static final String INC = "INC";
 	private static final String DEC = "DEC";
+	private static final String JMP = "JMP";
 
 	public byte[] compilar(String codigo) throws SemEspacoMemoriaCompiladorException {
 		validarCodigo(codigo);
