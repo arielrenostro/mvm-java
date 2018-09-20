@@ -13,7 +13,7 @@ public class MemoriaController {
 		return criarMemoriaPorArray(bios);
 	}
 
-	private Memoria criarMemoriaPorArray(byte[] bios) throws PosicaoMemoriaInvalidaException {
+	public Memoria criarMemoriaPorArray(byte[] bios) throws PosicaoMemoriaInvalidaException {
 		Memoria memoria = new Memoria((short) bios.length);
 		for (short idx = 0; idx < bios.length; idx++) {
 			memoria.setData(idx, bios[idx]);

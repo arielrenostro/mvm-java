@@ -3,6 +3,7 @@ package br.ariel.mvm.controller;
 import java.io.IOException;
 
 import br.ariel.mvm.exception.MVMException;
+import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
 import br.ariel.mvm.exception.SemMemoriaException;
 import br.ariel.mvm.exception.SemProcessadorException;
 import br.ariel.mvm.model.Memoria;
@@ -36,6 +37,10 @@ public class MVMController {
 
 	public Memoria criarMemoriaPorBios(String bios) throws IOException, MVMException {
 		return memoriaController.criarMemoriaPorBios(bios);
+	}
+
+	public Memoria criarMemoriaPorArray(byte[] array) throws PosicaoMemoriaInvalidaException {
+		return memoriaController.criarMemoriaPorArray(array);
 	}
 
 }

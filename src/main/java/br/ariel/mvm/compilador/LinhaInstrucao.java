@@ -8,7 +8,9 @@ public class LinhaInstrucao {
 	private final int idxLinha;
 	private byte[] instrucao = new byte[0];
 
-	private String label;
+	private int idxByte;
+
+	private String label = "";
 	private boolean ehLabel = false;
 
 	public LinhaInstrucao(String linha, int idxLinha) {
@@ -48,4 +50,13 @@ public class LinhaInstrucao {
 	public void setEhLabel(boolean ehLabel) {
 		this.ehLabel = ehLabel;
 	}
+
+	public int getIdxByte() {
+		return idxByte;
+	}
+
+	public void setIdxByte(int idxByte) {
+		this.idxByte = idxByte;
+	}
+
 }

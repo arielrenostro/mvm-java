@@ -8,10 +8,12 @@ import java.util.stream.Stream;
 import br.ariel.mvm.exception.InstrucaoInvalidaException;
 import br.ariel.mvm.exception.MVMException;
 import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
+import br.ariel.mvm.model.ContextoExecucao;
 import br.ariel.mvm.model.InstrucaoProcessador;
 import br.ariel.mvm.model.Memoria;
 import br.ariel.mvm.model.Monitor;
 import br.ariel.mvm.model.Processador;
+import br.ariel.mvm.model.TipoDispositivo;
 
 /**
  * @author ariel
@@ -21,10 +23,11 @@ public class ProcessadorController {
 	public void processar(Processador processador, Memoria memoria, Monitor monitor) throws MVMException, InterruptedException {
 		Map<Byte, InstrucaoProcessador> instrucoes = carregarInstrucoes();
 		InstrucaoProcessador instrucao = null;
+		ContextoExecucao contexto = new ContextoExecucao();
 
 		while (instrucao != InstrucaoProcessador.HALT) {
 			instrucao = proximaInstrucao(processador, memoria, instrucoes);
-			executarInstrucao(processador, memoria, monitor, instrucao);
+			executarInstrucao(processador, memoria, monitor, instrucao, contexto);
 		}
 	}
 
@@ -32,7 +35,7 @@ public class ProcessadorController {
 		return Stream.of(InstrucaoProcessador.values()).collect(Collectors.toMap(InstrucaoProcessador::getCode, Function.identity()));
 	}
 
-	private void executarInstrucao(Processador processador, Memoria memoria, Monitor monitor, InstrucaoProcessador instrucao) throws MVMException, InterruptedException {
+	private void executarInstrucao(Processador processador, Memoria memoria, Monitor monitor, InstrucaoProcessador instrucao, ContextoExecucao contexto) throws MVMException, InterruptedException {
 		if (InstrucaoProcessador.INIT_AX.equals(instrucao)) {
 			processador.setAx((short) 0);
 
@@ -166,7 +169,7 @@ public class ProcessadorController {
 
 		} else if (InstrucaoProcessador.TEST_AX_0.equals(instrucao)) {
 			if (processador.getAx() == 0) {
-				executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.JMP);
+				executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.JMP, contexto);
 			} else {
 				short ip = (short) (processador.getIp() + 2);
 				processador.setIp(ip);
@@ -204,8 +207,7 @@ public class ProcessadorController {
 			// TODO Validar se deve congelar esperando uma entrada do teclado.
 
 		} else if (InstrucaoProcessador.OUT_AX.equals(instrucao)) {
-			byte caractere = memoria.getData(processador.incIp());
-			monitor.append(caractere);
+			processarOut(processador, memoria, monitor, contexto);
 
 		} else if (InstrucaoProcessador.PUSH_AX.equals(instrucao)) {
 			short sp = processador.getSp();
@@ -300,7 +302,7 @@ public class ProcessadorController {
 
 		} else if (InstrucaoProcessador.TEST_AX_BX.equals(instrucao)) {
 			if (processador.getBx() == processador.getAx()) {
-				executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.JMP);
+				executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.JMP, contexto);
 			} else {
 				short ip = (short) (processador.getIp() + 2);
 				processador.setIp(ip);
@@ -328,11 +330,11 @@ public class ProcessadorController {
 			// //"pop bp"
 			// //"ret"
 
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.POP_CX);
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.POP_BX);
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.POP_AX);
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.POP_BP);
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.RET);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.POP_CX, contexto);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.POP_BX, contexto);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.POP_AX, contexto);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.POP_BP, contexto);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.RET, contexto);
 
 		} else if (InstrucaoProcessador.INT.equals(instrucao)) {
 			// //"push ip"
@@ -350,10 +352,10 @@ public class ProcessadorController {
 
 			processador.setSp(idxSp);
 			processador.setIp(idxInt);
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.PUSH_BP);
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.PUSH_AX);
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.PUSH_BX);
-			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.PUSH_CX);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.PUSH_BP, contexto);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.PUSH_AX, contexto);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.PUSH_BX, contexto);
+			executarInstrucao(processador, memoria, monitor, InstrucaoProcessador.PUSH_CX, contexto);
 
 		} else if (InstrucaoProcessador.INC_BP.equals(instrucao)) {
 			processador.setBp((short) (processador.getBp() + 1));
@@ -362,6 +364,31 @@ public class ProcessadorController {
 			processador.setBp((short) (processador.getBp() - 1));
 
 		}
+	}
+
+	private void processarOut(Processador processador, Memoria memoria, Monitor monitor, ContextoExecucao contexto) {
+		if (contexto.isDispositivoSelecionado()) {
+			TipoDispositivo tipoDispositivo = contexto.getTipoDispositivo();
+			if (null == tipoDispositivo) {
+				return;
+			}
+
+			switch (tipoDispositivo) {
+			case MONITOR:
+				processarMonitor(processador, memoria, monitor, contexto);
+			}
+		} else {
+			TipoDispositivo tipoDispositivo = TipoDispositivo.getByCode(processador.getAx());
+			contexto.setTipoDispositivo(tipoDispositivo);
+		}
+
+		contexto.setDispositivoSelecionado(!contexto.isDispositivoSelecionado());
+	}
+
+	private void processarMonitor(Processador processador, Memoria memoria, Monitor monitor, ContextoExecucao contexto) {
+		short linha = processador.getBx();
+		short coluna = processador.getCx();
+		monitor.set(linha, coluna, (byte) processador.getAx());
 	}
 
 	/**

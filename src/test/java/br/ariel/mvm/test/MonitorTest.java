@@ -13,23 +13,4 @@ public class MonitorTest {
 		Assert.assertEquals("", monitor.getConteudo());
 	}
 
-	@Test
-	public void testeMonitorAppend() {
-		Monitor monitor = new Monitor();
-		monitor.append("Oi");
-		monitor.append('a');
-		monitor.append((byte) 65);
-
-		Assert.assertEquals("OiaA", monitor.getConteudo());
-	}
-
-	@Test
-	public void testeMonitorLimpar() {
-		Monitor monitor = new Monitor();
-		monitor.append("asdaisd");
-		monitor.limpar();
-
-		Assert.assertEquals("", monitor.getConteudo());
-	}
-
 }

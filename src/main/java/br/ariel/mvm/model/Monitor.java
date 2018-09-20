@@ -1,27 +1,57 @@
 package br.ariel.mvm.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import br.ariel.mvm.model.listeners.IMonitorListener;
+
 public class Monitor {
 
-	private StringBuffer buffer = new StringBuffer();
+	private static final int LINHAS = 20;
+	private static final int COLUNAS = 40;
 
-	public void append(String str) {
-		buffer.append(str);
+	private char[] buffer = new char[200];
+	private int cursor = 0;
+
+	private List<IMonitorListener> listeners = new ArrayList<>();
+
+	public void set(short linha, short coluna, byte dado) {
+		if (linha > LINHAS || coluna > COLUNAS) {
+			return;
+		}
+
+		buffer[(linha * LINHAS) + (coluna * COLUNAS)] = (char) dado;
+		notificar(linha, coluna, dado);
+	}
+
+	private void notificar(short linha, short coluna, byte dado) {
+		listeners.forEach(listener -> listener.notificar(linha, coluna, dado));
 	}
 
 	public void append(char c) {
-		buffer.append(c);
+		buffer[cursor++] = c;
+		notificar((short) 0, (short) 0, (byte) c);
 	}
 
 	public void append(byte b) {
-		buffer.append((char) b);
+		append((char) b);
 	}
 
 	public String getConteudo() {
-		return buffer.toString();
+		StringBuilder sb = new StringBuilder();
+		for (char c : buffer) {
+			sb.append(c);
+		}
+		return sb.toString();
 	}
 
 	public void limpar() {
-		buffer = new StringBuffer();
+		buffer = new char[200];
 	}
 
+	public void adicionarListener(IMonitorListener listener) {
+		if (null != listener) {
+			listeners.add(listener);
+		}
+	}
 }
