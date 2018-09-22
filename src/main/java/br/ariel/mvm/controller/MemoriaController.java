@@ -14,7 +14,7 @@ public class MemoriaController {
 	}
 
 	public Memoria criarMemoriaPorArray(byte[] bios) throws PosicaoMemoriaInvalidaException {
-		Memoria memoria = new Memoria((short) bios.length);
+		Memoria memoria = new Memoria(Short.MAX_VALUE);
 		for (short idx = 0; idx < bios.length; idx++) {
 			memoria.setData(idx, bios[idx]);
 		}

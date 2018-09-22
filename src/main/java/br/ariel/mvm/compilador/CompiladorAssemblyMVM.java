@@ -38,11 +38,17 @@ public class CompiladorAssemblyMVM {
 	private static final String HALT = "HALT";
 	private static final String IRET = "IRET";
 	private static final String INT = "INT";
+	private static final String ORG = "ORG";
+
+	private static final int INDICE_MAXIMO = Short.MAX_VALUE - 1;
 
 	public byte[] compilar(String codigo) throws CompiladorException {
 		List<String> linhasCodigo = getLinhasCodigo(codigo);
 		List<LinhaInstrucao> linhasInstrucao = getLinhasInstrucao(linhasCodigo);
 		processarLinhasInstrucao(linhasInstrucao);
+		definirIndiceBytes(linhasInstrucao);
+		processarLabels(linhasInstrucao);
+		validarTamanhoInstrucoes(linhasInstrucao);
 		return converterLinhasInstrucaoParaArray(linhasInstrucao);
 	}
 
@@ -61,18 +67,15 @@ public class CompiladorAssemblyMVM {
 		if (exceptions.getSuppressed().length > 0) {
 			throw exceptions;
 		}
-
-		definirIndiceBytes(linhasInstrucao);
-		processarLabels(linhasInstrucao);
-
-		validarTamanhoInstrucoes(linhasInstrucao);
 	}
 
 	private void definirIndiceBytes(List<LinhaInstrucao> linhasInstrucao) {
 		int idx = 0;
 		for (LinhaInstrucao instrucao : linhasInstrucao) {
 			instrucao.setIdxByte(idx);
-			if (!instrucao.isEhLabel()) {
+			if (instrucao.isEhOrg()) {
+				idx = instrucao.getIdxOrg();
+			} else if (!instrucao.isEhLabel()) {
 				idx += instrucao.getInstrucao().length;
 			}
 		}
@@ -89,11 +92,11 @@ public class CompiladorAssemblyMVM {
 
 		for (LinhaInstrucao linha : linhasInstrucaoComLabel) {
 			byte instrucao = linha.getInstrucao()[0];
-			Integer index = indicePorLabel.get(linha.getLabel());
-			if (null == index) {
+			Integer indexLabel = indicePorLabel.get(linha.getLabel());
+			if (null == indexLabel) {
 				throw new CompiladorException("Label [" + linha.getLabel() + "] não declarada!");
 			}
-			byte[] instrucaoCompleta = getBytesInstrucaoComIndex(instrucao, index);
+			byte[] instrucaoCompleta = getBytesInstrucaoComIndex(instrucao, indexLabel);
 			linha.setInstrucao(instrucaoCompleta);
 		}
 	}
@@ -112,68 +115,90 @@ public class CompiladorAssemblyMVM {
 		String comando = getComandoLinha(linha);
 		linha = removerComando(linha, comando);
 		switch (comando) {
-		case MOV:
-			processarComandoMOV(linhaInstrucao, linha, comando);
-			break;
-		case INIT:
-			processarComandoINIT(linhaInstrucao, linha, comando);
-			break;
-		case ADD:
-			processarComandoADD(linhaInstrucao, linha, comando);
-			break;
-		case SUB:
-			processarComandoSUB(linhaInstrucao, linha, comando);
-			break;
-		case INC:
-			processarComandoINC(linhaInstrucao, linha, comando);
-			break;
-		case DEC:
-			processarComandoDEC(linhaInstrucao, linha, comando);
-			break;
-		case JMP:
-			processarComandoJMP(linhaInstrucao, linha, comando);
-			break;
-		case TEST:
-			processarComandoTEST(linhaInstrucao, linha, comando);
-			break;
-		case CALL:
-			processarComandoCALL(linhaInstrucao, linha, comando);
-			break;
-		case RET:
-			processarComandoRET(linhaInstrucao, linha, comando);
-			break;
-		case IN:
-			processarComandoIN(linhaInstrucao, linha, comando);
-			break;
-		case OUT:
-			processarComandoOUT(linhaInstrucao, linha, comando);
-			break;
-		case PUSH:
-			processarComandoPUSH(linhaInstrucao, linha, comando);
-			break;
-		case POP:
-			processarComandoPOP(linhaInstrucao, linha, comando);
-			break;
-		case NOP:
-			processarComandoNOP(linhaInstrucao, linha, comando);
-			break;
-		case HALT:
-			processarComandoHALT(linhaInstrucao, linha, comando);
-			break;
-		case IRET:
-			processarComandoIRET(linhaInstrucao, linha, comando);
-			break;
-		case INT:
-			processarComandoINT(linhaInstrucao, linha, comando);
-			break;
-		default:
-			processarLabel(linhaInstrucao, linha, comando);
+			case MOV:
+				processarComandoMOV(linhaInstrucao, linha, comando);
+				break;
+			case INIT:
+				processarComandoINIT(linhaInstrucao, linha, comando);
+				break;
+			case ADD:
+				processarComandoADD(linhaInstrucao, linha, comando);
+				break;
+			case SUB:
+				processarComandoSUB(linhaInstrucao, linha, comando);
+				break;
+			case INC:
+				processarComandoINC(linhaInstrucao, linha, comando);
+				break;
+			case DEC:
+				processarComandoDEC(linhaInstrucao, linha, comando);
+				break;
+			case JMP:
+				processarComandoJMP(linhaInstrucao, linha, comando);
+				break;
+			case TEST:
+				processarComandoTEST(linhaInstrucao, linha, comando);
+				break;
+			case CALL:
+				processarComandoCALL(linhaInstrucao, linha, comando);
+				break;
+			case RET:
+				processarComandoRET(linhaInstrucao, linha, comando);
+				break;
+			case IN:
+				processarComandoIN(linhaInstrucao, linha, comando);
+				break;
+			case OUT:
+				processarComandoOUT(linhaInstrucao, linha, comando);
+				break;
+			case PUSH:
+				processarComandoPUSH(linhaInstrucao, linha, comando);
+				break;
+			case POP:
+				processarComandoPOP(linhaInstrucao, linha, comando);
+				break;
+			case NOP:
+				processarComandoNOP(linhaInstrucao, linha, comando);
+				break;
+			case HALT:
+				processarComandoHALT(linhaInstrucao, linha, comando);
+				break;
+			case IRET:
+				processarComandoIRET(linhaInstrucao, linha, comando);
+				break;
+			case INT:
+				processarComandoINT(linhaInstrucao, linha, comando);
+				break;
+			case ORG:
+				processarComandoORG(linhaInstrucao, linha, comando);
+				break;
+			default:
+				processarLabel(linhaInstrucao, linha, comando);
 		}
+	}
+
+	private void processarComandoORG(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		linha = linha.toUpperCase().trim();
+
+		String primeiroParametro = getPrimeiroParametro(linha);
+		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		if (Utils.isNotNumber(primeiroParametro) || Utils.isNotEmpty(linha)) {
+			throw new CompiladorException("ORG inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
+		}
+
+		int idxOrg = Integer.valueOf(primeiroParametro);
+
+		if (INDICE_MAXIMO < idxOrg) {
+			throw new CompiladorException("ORG inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]. Índice máximo [" + INDICE_MAXIMO + "] e índice informado [" + idxOrg + "]");
+		}
+
+		linhaInstrucao.setEhOrg(true);
+		linhaInstrucao.setIdxOrg(idxOrg);
 	}
 
 	private void processarComandoCALL(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
 		if (Utils.isEmpty(linha) || Utils.isNotEmpty(linha)) {
-			throw new CompiladorException("CALL inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("CALL inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		byte[] bytes = getBytesInstrucaoComIndex(InstrucaoProcessador.CALL, 0);
@@ -183,7 +208,7 @@ public class CompiladorAssemblyMVM {
 
 	private void processarComandoJMP(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
 		if (Utils.isEmpty(linha)) {
-			throw new CompiladorException("JMP inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("JMP inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		byte[] bytes = getBytesInstrucaoComIndex(InstrucaoProcessador.JMP, 0);
@@ -197,7 +222,7 @@ public class CompiladorAssemblyMVM {
 		String primeiroParametro = getPrimeiroParametro(linha);
 		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha) || Utils.isNotNumber(primeiroParametro)) {
-			throw new CompiladorException("INT inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("INT inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		byte[] bytes = getBytesInstrucaoComIndex(InstrucaoProcessador.INT, Integer.valueOf(primeiroParametro));
@@ -212,13 +237,13 @@ public class CompiladorAssemblyMVM {
 		byte[] bytes = new byte[3];
 		bytes[0] = instrucao;
 		bytes[1] = (byte) (0x00FF & index);
-		bytes[2] = (byte) (0xFF00 & index);
+		bytes[2] = (byte) (((short) 0xFF00 & index) >> 8);
 		return bytes;
 	}
 
 	private void processarComandoIRET(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
 		if (!linha.trim().isEmpty()) {
-			throw new CompiladorException("IRET inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("IRET inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { InstrucaoProcessador.IRET.getCode() });
@@ -226,7 +251,7 @@ public class CompiladorAssemblyMVM {
 
 	private void processarComandoHALT(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
 		if (!linha.trim().isEmpty()) {
-			throw new CompiladorException("HALT inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("HALT inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { InstrucaoProcessador.HALT.getCode() });
@@ -234,7 +259,7 @@ public class CompiladorAssemblyMVM {
 
 	private void processarComandoNOP(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
 		if (!linha.trim().isEmpty()) {
-			throw new CompiladorException("NOP inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("NOP inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { InstrucaoProcessador.NOP.getCode() });
@@ -246,7 +271,7 @@ public class CompiladorAssemblyMVM {
 		String primeiroParametro = getPrimeiroParametro(linha);
 		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
-			throw new CompiladorException("POP inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("POP inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -255,7 +280,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("POP inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("POP inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -267,7 +292,7 @@ public class CompiladorAssemblyMVM {
 		String primeiroParametro = getPrimeiroParametro(linha);
 		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
-			throw new CompiladorException("PUSH inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("PUSH inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -276,7 +301,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("PUSH inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("PUSH inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -288,7 +313,7 @@ public class CompiladorAssemblyMVM {
 		String primeiroParametro = getPrimeiroParametro(linha);
 		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
-			throw new CompiladorException("OUT inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("OUT inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -297,7 +322,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("OUT inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("OUT inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -309,7 +334,7 @@ public class CompiladorAssemblyMVM {
 		String primeiroParametro = getPrimeiroParametro(linha);
 		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
-			throw new CompiladorException("IN inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("IN inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -318,7 +343,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("IN inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("IN inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -326,7 +351,7 @@ public class CompiladorAssemblyMVM {
 
 	private void processarComandoRET(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
 		if (!linha.trim().isEmpty()) {
-			throw new CompiladorException("RET inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("RET inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { InstrucaoProcessador.RET.getCode() });
@@ -337,7 +362,7 @@ public class CompiladorAssemblyMVM {
 
 		String primeiroParametro = getPrimeiroParametro(linha);
 		if (Utils.isEmpty(primeiroParametro)) {
-			throw new CompiladorException("TEST inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("TEST inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -352,7 +377,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("TEST inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("TEST inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -368,7 +393,7 @@ public class CompiladorAssemblyMVM {
 		String primeiroParametro = getPrimeiroParametro(linha);
 		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
-			throw new CompiladorException("DEC inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("DEC inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -377,7 +402,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("DEC inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("DEC inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -389,7 +414,7 @@ public class CompiladorAssemblyMVM {
 		String primeiroParametro = getPrimeiroParametro(linha);
 		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
-			throw new CompiladorException("INC inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("INC inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -398,7 +423,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("INC inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("INC inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -406,11 +431,11 @@ public class CompiladorAssemblyMVM {
 
 	private void processarLabel(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
 		if (Utils.isNotEmpty(linha)) {
-			throw new CompiladorException("Label ou comando inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("Label ou comando inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		if (!comando.endsWith(":")) {
-			throw new CompiladorException("Esperado ':' no final da label da linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("Esperado ':' no final da label da linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		comando = comando.substring(0, comando.length() - 1);
@@ -426,7 +451,7 @@ public class CompiladorAssemblyMVM {
 		String segundoParametro = getSegundoParametro(linhaInstrucao, linha);
 
 		if (Utils.isEmpty(primeiroParametro) || Utils.isEmpty(segundoParametro)) {
-			throw new CompiladorException("SUB inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("SUB inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -437,7 +462,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("SUB inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("SUB inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -450,7 +475,7 @@ public class CompiladorAssemblyMVM {
 		String segundoParametro = getSegundoParametro(linhaInstrucao, linha);
 
 		if (Utils.isEmpty(primeiroParametro) || Utils.isEmpty(segundoParametro)) {
-			throw new CompiladorException("ADD inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("ADD inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -461,7 +486,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("ADD inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("ADD inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
@@ -471,7 +496,7 @@ public class CompiladorAssemblyMVM {
 		linha = linha.toUpperCase();
 
 		if (!"AX".equalsIgnoreCase(linha)) {
-			throw new CompiladorException("Esperado um INIT AX na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("Esperado um INIT AX na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { InstrucaoProcessador.INIT_AX.getCode() });
@@ -484,7 +509,7 @@ public class CompiladorAssemblyMVM {
 		String segundoParametro = getSegundoParametro(linhaInstrucao, linha);
 
 		if (Utils.isEmpty(primeiroParametro) || Utils.isEmpty(segundoParametro)) {
-			throw new CompiladorException("MOV inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("MOV inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		StringBuilder enumSB = new StringBuilder();
@@ -495,7 +520,7 @@ public class CompiladorAssemblyMVM {
 
 		InstrucaoProcessador instrucao = getEnumPorStringBuilder(enumSB);
 		if (null == instrucao) {
-			throw new CompiladorException("MOV inválido na linha [" + linhaInstrucao.getIdxLinha() + "]");
+			throw new CompiladorException("MOV inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
 
 		definirInstrucaoMOV(linhaInstrucao, instrucao, primeiroParametro, segundoParametro);
@@ -522,7 +547,7 @@ public class CompiladorAssemblyMVM {
 
 	private byte[] quebrarBytesValor(short valor) {
 		byte byte1 = (byte) (valor & 0x00FF);
-		byte byte2 = (byte) (valor & 0xFF00);
+		byte byte2 = (byte) (((short) 0xFF00 & valor) >> 8);
 		return new byte[] { byte1, byte2 };
 	}
 
@@ -604,7 +629,7 @@ public class CompiladorAssemblyMVM {
 
 	private void validarTamanhoInstrucoes(List<LinhaInstrucao> linhasInstrucao) throws SemEspacoMemoriaCompiladorException {
 		int totalBytes = getTotalBytesInstrucoes(linhasInstrucao);
-		if (totalBytes > Short.MAX_VALUE) {
+		if (INDICE_MAXIMO < totalBytes) {
 			throw new SemEspacoMemoriaCompiladorException(totalBytes);
 		}
 	}
@@ -613,28 +638,42 @@ public class CompiladorAssemblyMVM {
 		int totalBytes = getTotalBytesInstrucoes(linhasInstrucao);
 		AtomicInteger idx = new AtomicInteger(0);
 		byte[] bytes = new byte[totalBytes];
-		linhasInstrucao.stream() //
-				.map(linhaInstrucao -> linhaInstrucao.getInstrucao()) //
-				.forEach(bytesInstrucao -> {
-					for (byte byteInstrucao : bytesInstrucao) {
-						bytes[idx.getAndIncrement()] = byteInstrucao;
-					}
-				});
+		for (LinhaInstrucao linha : linhasInstrucao) {
+			if (linha.isEhOrg()) {
+				idx.set(linha.getIdxOrg());
+			} else {
+				for (byte byteInstrucao : linha.getInstrucao()) {
+					bytes[idx.getAndIncrement()] = byteInstrucao;
+				}
+			}
+		}
 		return bytes;
 	}
 
 	private int getTotalBytesInstrucoes(List<LinhaInstrucao> linhasInstrucao) {
-		return linhasInstrucao.parallelStream() //
-				.map(linha -> linha.getInstrucao().length) //
-				.reduce(Integer::sum) //
-				.orElse(0);
+		AtomicInteger indice = new AtomicInteger(0);
+		AtomicInteger maiorIndice = new AtomicInteger(0);
+		for (LinhaInstrucao linha : linhasInstrucao) {
+			if (linha.isEhOrg()) {
+				indice.set(linha.getIdxOrg());
+			} else {
+				indice.addAndGet(linha.getInstrucao().length);
+			}
+			if (indice.get() > maiorIndice.get()) {
+				maiorIndice.set(indice.get());
+			}
+		}
+		return maiorIndice.get();
 	}
 
 	private List<LinhaInstrucao> getLinhasInstrucao(List<String> linhasCodigo) {
 		List<LinhaInstrucao> linhasInstrucao = new ArrayList<>();
 
 		for (int idx = 0; idx < linhasCodigo.size(); idx++) {
-			linhasInstrucao.add(new LinhaInstrucao(linhasCodigo.get(idx), idx));
+			String linha = linhasCodigo.get(idx);
+			if (!linha.isEmpty()) {
+				linhasInstrucao.add(new LinhaInstrucao(linha, idx));
+			}
 		}
 
 		return linhasInstrucao;
@@ -644,7 +683,6 @@ public class CompiladorAssemblyMVM {
 		return Arrays.stream(codigo.split("\\n")) //
 				.parallel()//
 				.map(String::trim) //
-				.map(String::toUpperCase) //
 				.collect(Collectors.toList());
 	}
 

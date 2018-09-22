@@ -2,14 +2,18 @@ package br.ariel.mvm.main;
 
 import java.awt.EventQueue;
 
-import br.ariel.mvm.view.MonitorView;
+import br.ariel.mvm.view.MVMView;
 
+
+/**
+ * @author ariel
+ */
 public class MVM {
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
 			try {
-				MonitorView frame = new MonitorView();
+				MVMView frame = new MVMView();
 				frame.setVisible(true);
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -1,4 +1,4 @@
-package br.ariel.mvm.main;
+package br.ariel.mvm.test;
 
 import java.io.IOException;
 

@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import br.ariel.mvm.exception.InstrucaoInvalidaException;
 import br.ariel.mvm.exception.MVMException;
 import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
-import br.ariel.mvm.model.ContextoExecucao;
+import br.ariel.mvm.model.ContextoMVM;
 import br.ariel.mvm.model.InstrucaoProcessador;
 import br.ariel.mvm.model.Memoria;
 import br.ariel.mvm.model.Monitor;
@@ -20,12 +20,11 @@ import br.ariel.mvm.model.TipoDispositivo;
  */
 public class ProcessadorController {
 
-	public void processar(Processador processador, Memoria memoria, Monitor monitor) throws MVMException, InterruptedException {
+	public void processar(Processador processador, Memoria memoria, Monitor monitor, ContextoMVM contexto) throws MVMException, InterruptedException {
 		Map<Byte, InstrucaoProcessador> instrucoes = carregarInstrucoes();
 		InstrucaoProcessador instrucao = null;
-		ContextoExecucao contexto = new ContextoExecucao();
 
-		while (instrucao != InstrucaoProcessador.HALT) {
+		while (instrucao != InstrucaoProcessador.HALT && !Thread.interrupted()) {
 			instrucao = proximaInstrucao(processador, memoria, instrucoes);
 			executarInstrucao(processador, memoria, monitor, instrucao, contexto);
 		}
@@ -35,7 +34,9 @@ public class ProcessadorController {
 		return Stream.of(InstrucaoProcessador.values()).collect(Collectors.toMap(InstrucaoProcessador::getCode, Function.identity()));
 	}
 
-	private void executarInstrucao(Processador processador, Memoria memoria, Monitor monitor, InstrucaoProcessador instrucao, ContextoExecucao contexto) throws MVMException, InterruptedException {
+	private void executarInstrucao(Processador processador, Memoria memoria, Monitor monitor, InstrucaoProcessador instrucao, ContextoMVM contexto) throws MVMException, InterruptedException {
+		contexto.setInstrucaoAtual(instrucao);
+
 		if (InstrucaoProcessador.INIT_AX.equals(instrucao)) {
 			processador.setAx((short) 0);
 
@@ -366,7 +367,7 @@ public class ProcessadorController {
 		}
 	}
 
-	private void processarOut(Processador processador, Memoria memoria, Monitor monitor, ContextoExecucao contexto) {
+	private void processarOut(Processador processador, Memoria memoria, Monitor monitor, ContextoMVM contexto) {
 		if (contexto.isDispositivoSelecionado()) {
 			TipoDispositivo tipoDispositivo = contexto.getTipoDispositivo();
 			if (null == tipoDispositivo) {
@@ -374,8 +375,8 @@ public class ProcessadorController {
 			}
 
 			switch (tipoDispositivo) {
-			case MONITOR:
-				processarMonitor(processador, memoria, monitor, contexto);
+				case MONITOR:
+					processarMonitor(processador, memoria, monitor, contexto);
 			}
 		} else {
 			TipoDispositivo tipoDispositivo = TipoDispositivo.getByCode(processador.getAx());
@@ -385,7 +386,7 @@ public class ProcessadorController {
 		contexto.setDispositivoSelecionado(!contexto.isDispositivoSelecionado());
 	}
 
-	private void processarMonitor(Processador processador, Memoria memoria, Monitor monitor, ContextoExecucao contexto) {
+	private void processarMonitor(Processador processador, Memoria memoria, Monitor monitor, ContextoMVM contexto) {
 		short linha = processador.getBx();
 		short coluna = processador.getCx();
 		monitor.set(linha, coluna, (byte) processador.getAx());

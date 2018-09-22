@@ -3,10 +3,12 @@ package br.ariel.mvm.model;
 /**
  * @author ariel
  */
-public class ContextoExecucao {
+public class ContextoMVM {
 
 	private boolean dispositivoSelecionado = false;
 	private TipoDispositivo tipoDispositivo;
+
+	private InstrucaoProcessador instrucaoAtual;
 
 	public boolean isDispositivoSelecionado() {
 		return dispositivoSelecionado;
@@ -22,6 +24,14 @@ public class ContextoExecucao {
 
 	public void setTipoDispositivo(TipoDispositivo tipoDispositivo) {
 		this.tipoDispositivo = tipoDispositivo;
+	}
+
+	public InstrucaoProcessador getInstrucaoAtual() {
+		return instrucaoAtual;
+	}
+
+	public void setInstrucaoAtual(InstrucaoProcessador instrucaoAtual) {
+		this.instrucaoAtual = instrucaoAtual;
 	}
 
 }

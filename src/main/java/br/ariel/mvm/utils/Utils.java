@@ -7,17 +7,18 @@ public class Utils {
 	}
 
 	public static boolean isNotNumber(String str) {
-		if (isEmpty(str)) {
-			return true;
-		}
-		return false; // TODO IMPLEMENTAR
+		return !isNumber(str);
 	}
 
 	public static boolean isNumber(String str) {
-		return !isNotNumber(str);
+		if (isEmpty(str)) {
+			return false;
+		}
+		return !str.matches("[^\\d+.?\\d*]") && str.matches("\\d+.?\\d*");
 	}
 
 	public static boolean isNotEmpty(String str) {
 		return !isEmpty(str);
 	}
+
 }

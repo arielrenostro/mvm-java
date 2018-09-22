@@ -6,6 +6,7 @@ import br.ariel.mvm.exception.MVMException;
 import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
 import br.ariel.mvm.exception.SemMemoriaException;
 import br.ariel.mvm.exception.SemProcessadorException;
+import br.ariel.mvm.model.ContextoMVM;
 import br.ariel.mvm.model.Memoria;
 import br.ariel.mvm.model.Monitor;
 import br.ariel.mvm.model.Processador;
@@ -15,14 +16,13 @@ public class MVMController {
 	private ProcessadorController processadorController = new ProcessadorController();
 	private MemoriaController memoriaController = new MemoriaController();
 
-	public void iniciar(Processador processador, Monitor monitor, String bios) throws MVMException, InterruptedException, IOException {
-		Memoria memoria = memoriaController.criarMemoriaPorBios(bios);
-		iniciar(processador, memoria, monitor);
+	public void iniciar(Processador processador, Memoria memoria, Monitor monitor) throws MVMException, InterruptedException {
+		iniciar(processador, memoria, monitor, new ContextoMVM());
 	}
 
-	public void iniciar(Processador processador, Memoria memoria, Monitor monitor) throws MVMException, InterruptedException {
+	public void iniciar(Processador processador, Memoria memoria, Monitor monitor, ContextoMVM contextoMVM) throws MVMException, InterruptedException {
 		validarProcessar(processador, memoria);
-		processadorController.processar(processador, memoria, monitor);
+		processadorController.processar(processador, memoria, monitor, contextoMVM);
 	}
 
 	private void validarProcessar(Processador processador, Memoria memoria) throws MVMException {
