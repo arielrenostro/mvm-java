@@ -22,7 +22,7 @@ public class BiosController {
 	public byte[] carregarArquivoBios(String url) throws IOException, MVMException {
 		Path path = Paths.get(url);
 		if (!Files.exists(path)) {
-			throw new MVMException("Arquivo n√£o existe [" + url + "]");
+			throw new MVMException("Arquivo n„o existe [" + url + "]");
 		}
 
 		File file = path.toFile();
