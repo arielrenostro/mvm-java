@@ -20,8 +20,10 @@ public class Monitor {
 			return;
 		}
 
-		buffer[(linha * LINHAS) + (coluna * COLUNAS)] = (char) dado;
-		notificar(linha, coluna, dado);
+		if ((dado >= 65 && dado <= 90) || dado == 32) {
+			buffer[(linha * LINHAS) + (coluna * COLUNAS)] = (char) dado;
+			notificar(linha, coluna, dado);
+		}
 	}
 
 	private void notificar(short linha, short coluna, byte dado) {
