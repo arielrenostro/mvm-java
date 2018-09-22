@@ -173,8 +173,35 @@ public class CompiladorAssemblyMVM {
 				processarComandoORG(linhaInstrucao, linha, comando);
 				break;
 			default:
-				processarLabel(linhaInstrucao, linha, comando);
+				processarNaoInstrucao(linhaInstrucao, linha, comando);
 		}
+	}
+
+	private void processarNaoInstrucao(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		boolean ehNumero = ehNumero(comando);
+		if (ehNumero) {
+			processarNumero(linhaInstrucao, linha, comando);
+		} else {
+			processarLabel(linhaInstrucao, linha, comando);
+		}
+	}
+
+	private void processarNumero(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {
+		if (Utils.isNotEmpty(linha)) {
+			throw new CompiladorException("Literal inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
+		}
+		comando = comando.substring(1, comando.length() - 1);
+		int literal = Integer.valueOf(comando);
+		if (literal <= 128 && literal >= -128) {
+			linhaInstrucao.setInstrucao(new byte[] { (byte) literal });
+		} else {
+			byte[] quebrarBytesValor = quebrarBytesValor((short) literal);
+			linhaInstrucao.setInstrucao(quebrarBytesValor);
+		}
+	}
+
+	private boolean ehNumero(String comando) {
+		return comando.matches("\\{\\d*\\}");
 	}
 
 	private void processarComandoORG(LinhaInstrucao linhaInstrucao, String linha, String comando) throws CompiladorException {

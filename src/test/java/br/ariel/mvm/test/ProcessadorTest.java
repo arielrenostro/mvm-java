@@ -1166,8 +1166,65 @@ public class ProcessadorTest extends MVMBaseTest {
 		Assert.assertEquals((short) 0x0003, processador.getIp());
 	}
 
-	// IRET((byte) 0b00110011), //
-	// INT((byte) 0b00110100), //
+	@Test
+	public void testInt() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.JMP);
+		adicionarInstrucao(7);
+		adicionarInstrucao(0);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(20);
+		adicionarInstrucao(0);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(50);
+		adicionarInstrucao(0);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.INT);
+		adicionarInstrucao(3);
+		adicionarInstrucao(0);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x0014, processador.getAx());
+		Assert.assertEquals((short) 0x0000, processador.getBx());
+		Assert.assertEquals((short) 0x0000, processador.getCx());
+		Assert.assertEquals((short) 0x0032, processador.getBp());
+		Assert.assertEquals((short) 0x0028, processador.getSp());
+		Assert.assertEquals((short) 0x0007, processador.getIp());
+	}
+
+	@Test
+	public void testIret() throws MVMException, InterruptedException {
+		adicionarInstrucao(InstrucaoProcessador.JMP);
+		adicionarInstrucao(7);
+		adicionarInstrucao(0);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(20);
+		adicionarInstrucao(0);
+		adicionarInstrucao(InstrucaoProcessador.IRET);
+		adicionarInstrucao(InstrucaoProcessador.MOV_AX_LITERAL);
+		adicionarInstrucao(50);
+		adicionarInstrucao(0);
+		adicionarInstrucao(InstrucaoProcessador.MOV_BP_AX);
+		adicionarInstrucao(InstrucaoProcessador.MOV_SP_AX);
+		adicionarInstrucao(InstrucaoProcessador.INT);
+		adicionarInstrucao(3);
+		adicionarInstrucao(0);
+		adicionarInstrucao(InstrucaoProcessador.INC_AX);
+		adicionarInstrucao(InstrucaoProcessador.HALT);
+
+		mvmController.iniciar(processador, memoria, monitor);
+
+		Assert.assertEquals((short) 0x0033, processador.getAx());
+		Assert.assertEquals((short) 0x0000, processador.getBx());
+		Assert.assertEquals((short) 0x0000, processador.getCx());
+		Assert.assertEquals((short) 0x0032, processador.getBp());
+		Assert.assertEquals((short) 0x0032, processador.getSp());
+		Assert.assertEquals((short) 0x0011, processador.getIp());
+	}
+
 	// IN_AX((byte) 0b00011101), //
 	// OUT_AX((byte) 0b00011110), //
 }

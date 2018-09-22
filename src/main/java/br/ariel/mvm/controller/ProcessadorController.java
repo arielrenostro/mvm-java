@@ -189,7 +189,7 @@ public class ProcessadorController {
 
 			short idxProximoIp = processador.incIp();
 			short idxSp = processador.getSp();
-			memoria.setData(idxSp--, (byte) (idxProximoIp & 0xFF00));
+			memoria.setData(idxSp--, (byte) (((short) 0xFF00 & idxProximoIp) >> 8));
 			memoria.setData(idxSp--, (byte) (idxProximoIp & 0x00FF));
 
 			processador.setSp(idxSp);
@@ -344,12 +344,18 @@ public class ProcessadorController {
 			// //"push bx"
 			// //"push cx"
 			// //"int"
-			short idxInt = processador.incIp();
+			byte low = memoria.getData(processador.incIp());
+			byte high = memoria.getData(processador.incIp());
+			short idxInt = concatenarBytes(high, low);
+
+			low = memoria.getData(idxInt++);
+			high = memoria.getData(idxInt);
+			idxInt = concatenarBytes(high, low);
 
 			short idxProximoIp = processador.incIp();
 			short idxSp = processador.getSp();
+			memoria.setData(idxSp--,  (byte) (((short) 0xFF00 & idxProximoIp) >> 8));
 			memoria.setData(idxSp--, (byte) (idxProximoIp & 0x00FF));
-			memoria.setData(idxSp--, (byte) (idxProximoIp & 0xFF00));
 
 			processador.setSp(idxSp);
 			processador.setIp(idxInt);

@@ -21,11 +21,13 @@ import javax.swing.table.DefaultTableModel;
 
 import br.ariel.mvm.controller.MVMController;
 import br.ariel.mvm.controller.MemoriaController;
+import br.ariel.mvm.exception.MVMException;
 import br.ariel.mvm.exception.PosicaoMemoriaInvalidaException;
 import br.ariel.mvm.model.ContextoMVM;
 import br.ariel.mvm.model.Memoria;
 import br.ariel.mvm.model.Monitor;
 import br.ariel.mvm.model.Processador;
+import br.ariel.mvm.utils.DialogUtils;
 
 /**
  * @author ariel
@@ -221,7 +223,11 @@ public class ExecucaoMVMView extends JFrame {
 				monitor.adicionarListener(monitorView);
 
 				new MVMController().iniciar(processador, memoria, monitor, contextoMVM);
+			} catch (MVMException e) {
+				e.printStackTrace();
+				DialogUtils.showDialogErro(this, e);
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		};
 
@@ -352,6 +358,8 @@ public class ExecucaoMVMView extends JFrame {
 				executor.shutdown();
 				timer.cancel();
 
+				monitorView.setVisible(false);
+				monitorView.dispose();
 				setVisible(false);
 				dispose();
 			}

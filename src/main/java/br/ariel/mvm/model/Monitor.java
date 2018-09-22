@@ -7,7 +7,7 @@ import br.ariel.mvm.model.listeners.IMonitorListener;
 
 public class Monitor {
 
-	private static final int LINHAS = 20;
+	private static final int LINHAS = 5;
 	private static final int COLUNAS = 40;
 
 	private char[] buffer = new char[200];
@@ -20,8 +20,8 @@ public class Monitor {
 			return;
 		}
 
-		if ((dado >= 65 && dado <= 90) || dado == 32) {
-			buffer[(linha * LINHAS) + (coluna * COLUNAS)] = (char) dado;
+		if ((dado >= 65 && dado <= 90) || (dado >= 48 && dado <= 57) || dado == 32) {
+			buffer[(linha * LINHAS) + coluna] = (char) dado;
 			notificar(linha, coluna, dado);
 		}
 	}
