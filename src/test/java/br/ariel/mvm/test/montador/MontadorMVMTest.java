@@ -1,17 +1,17 @@
-package br.ariel.mvm.test.compilador;
+package br.ariel.mvm.test.montador;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.ariel.mvm.compilador.CompiladorAssemblyMVM;
 import br.ariel.mvm.controller.MVMController;
 import br.ariel.mvm.exception.MVMException;
 import br.ariel.mvm.model.InstrucaoProcessador;
 import br.ariel.mvm.model.Memoria;
 import br.ariel.mvm.model.Monitor;
 import br.ariel.mvm.model.Processador;
+import br.ariel.mvm.montador.MontadorMVM;
 
-public class CompiladorAssemblyMVMTest {
+public class MontadorMVMTest {
 
 	private Processador processador;
 	private Memoria memoria;
@@ -25,7 +25,7 @@ public class CompiladorAssemblyMVMTest {
 		sb.append("MOV BX, AX").append("\n\r");
 		sb.append("HALT").append("\n\r");
 
-		byte[] codigo = new CompiladorAssemblyMVM().compilar(sb.toString());
+		byte[] codigo = new MontadorMVM().montar(sb.toString());
 
 		executar(codigo);
 
@@ -48,7 +48,7 @@ public class CompiladorAssemblyMVMTest {
 		sb.append("MOV CX, AX").append("\n\r");
 		sb.append("HALT").append("\n\r");
 
-		byte[] codigo = new CompiladorAssemblyMVM().compilar(sb.toString());
+		byte[] codigo = new MontadorMVM().montar(sb.toString());
 
 		executar(codigo);
 
@@ -69,7 +69,7 @@ public class CompiladorAssemblyMVMTest {
 		sb.append("INC BX").append("\n\r");
 		sb.append("HALT").append("\n\r");
 
-		byte[] codigo = new CompiladorAssemblyMVM().compilar(sb.toString());
+		byte[] codigo = new MontadorMVM().montar(sb.toString());
 
 		executar(codigo);
 

@@ -1,4 +1,4 @@
-package br.ariel.mvm.compilador;
+package br.ariel.mvm.montador;
 
 import java.util.Arrays;
 

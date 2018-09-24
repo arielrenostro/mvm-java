@@ -22,7 +22,7 @@ public class MVMView extends JFrame {
 
 	private static final long serialVersionUID = 8056153562726655087L;
 
-	CompiladorAssemblyMVMView compiladorAssemblyMVMView;
+	MontadorMVMView montadorMVMView;
 
 	public MVMView() {
 		setResizable(false);
@@ -36,9 +36,9 @@ public class MVMView extends JFrame {
 		flowLayout.setHgap(500);
 		getContentPane().add(panel, BorderLayout.CENTER);
 
-		JButton btnCompilar = new JButton("Compilador");
-		btnCompilar.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		panel.add(btnCompilar);
+		JButton btnMontador = new JButton("Montador");
+		btnMontador.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		panel.add(btnMontador);
 
 		JButton btnExecutarBIOS = new JButton("Executar Bios");
 		btnExecutarBIOS.setFont(new Font("Tahoma", Font.PLAIN, 20));
@@ -58,12 +58,12 @@ public class MVMView extends JFrame {
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel_1.add(lblNewLabel_1);
 
-		btnCompilar.addActionListener((args) -> {
-			if (null != compiladorAssemblyMVMView) {
-				compiladorAssemblyMVMView.dispose();
+		btnMontador.addActionListener((args) -> {
+			if (null != montadorMVMView) {
+				montadorMVMView.dispose();
 			}
-			compiladorAssemblyMVMView = new CompiladorAssemblyMVMView();
-			compiladorAssemblyMVMView.setVisible(true);
+			montadorMVMView = new MontadorMVMView();
+			montadorMVMView.setVisible(true);
 		});
 
 		btnExecutarBIOS.addActionListener((args) -> {
@@ -79,7 +79,7 @@ public class MVMView extends JFrame {
 
 	private String getCaminhoArquivo() {
 		JFileChooser jFileChooser = new JFileChooser();
-		jFileChooser.setFileFilter(new FileNameExtensionFilter("Binário", "bin"));
+		jFileChooser.setFileFilter(new FileNameExtensionFilter("Binï¿½rio", "bin"));
 		int resultado = jFileChooser.showOpenDialog(this);
 		if (resultado == JFileChooser.APPROVE_OPTION) {
 			return jFileChooser.getSelectedFile().getAbsolutePath();

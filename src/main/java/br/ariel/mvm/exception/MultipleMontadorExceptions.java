@@ -1,10 +1,10 @@
 package br.ariel.mvm.exception;
 
-public class MultipleCompiladorExceptions extends CompiladorException {
+public class MultipleMontadorExceptions extends MontadorException {
 
 	private static final long serialVersionUID = -3321136594766097309L;
 
-	public MultipleCompiladorExceptions() {
+	public MultipleMontadorExceptions() {
 		super("");
 	}
 

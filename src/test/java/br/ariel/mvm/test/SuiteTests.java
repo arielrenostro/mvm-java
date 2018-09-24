@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import br.ariel.mvm.test.compilador.CompiladorAssemblyMVMTest;
+import br.ariel.mvm.test.montador.MontadorMVMTest;
 
 /**
  * @author ariel
@@ -13,7 +13,7 @@ import br.ariel.mvm.test.compilador.CompiladorAssemblyMVMTest;
 @SuiteClasses({MemoriaTest.class, //
 	ProcessadorTest.class, //
 	BIOSTest.class, //
-	CompiladorAssemblyMVMTest.class })
+	MontadorMVMTest.class })
 public class SuiteTests {
 
 }
