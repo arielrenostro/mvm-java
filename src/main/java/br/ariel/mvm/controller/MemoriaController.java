@@ -28,4 +28,8 @@ public class MemoriaController {
 		}
 		return mem;
 	}
+
+	public void tratarEnderecoCarga(Memoria memoria, Integer enderecoCarga) {
+		// TODO -> Implementar
+	}
 }

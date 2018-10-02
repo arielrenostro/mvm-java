@@ -21,7 +21,12 @@ public class MVMController {
 	}
 
 	public void iniciar(Processador processador, Memoria memoria, Monitor monitor, ContextoMVM contextoMVM) throws MVMException, InterruptedException {
+		iniciar(processador, memoria, monitor, contextoMVM, null);
+	}
+
+	public void iniciar(Processador processador, Memoria memoria, Monitor monitor, ContextoMVM contextoMVM, Integer enderecoCarga) throws MVMException, InterruptedException {
 		validarProcessar(processador, memoria);
+		memoriaController.tratarEnderecoCarga(memoria, enderecoCarga);
 		processadorController.processar(processador, memoria, monitor, contextoMVM);
 	}
 

@@ -177,7 +177,7 @@ public class ExecucaoMVMView extends JFrame {
 
 		cbTipoVisualizacaoMemoria = new JComboBox<>();
 		cbTipoVisualizacaoMemoria.setMaximumRowCount(3);
-		cbTipoVisualizacaoMemoria.setModel(new DefaultComboBoxModel<>(new String[] {"Decimal", "Hexadecimal", "Bin\u00E1rio"}));
+		cbTipoVisualizacaoMemoria.setModel(new DefaultComboBoxModel<>(new String[] { "Decimal", "Hexadecimal", "Bin\u00E1rio" }));
 		cbTipoVisualizacaoMemoria.setSelectedIndex(2);
 		pnlTipoDadoMemoria.add(cbTipoVisualizacaoMemoria);
 
@@ -186,16 +186,15 @@ public class ExecucaoMVMView extends JFrame {
 
 		cbTipoVisualizacaoRegistrador = new JComboBox<>();
 		cbTipoVisualizacaoRegistrador.setMaximumRowCount(3);
-		cbTipoVisualizacaoRegistrador.setModel(new DefaultComboBoxModel<>(new String[] {"Decimal", "Hexadecimal", "Bin\u00E1rio"}));
+		cbTipoVisualizacaoRegistrador.setModel(new DefaultComboBoxModel<>(new String[] { "Decimal", "Hexadecimal", "Bin\u00E1rio" }));
 		cbTipoVisualizacaoRegistrador.setSelectedIndex(2);
 		pnlTipoDadoMemoria.add(cbTipoVisualizacaoRegistrador);
 
 		table = new JTable();
-		table.setModel(new DefaultTableModel(new Object[1][2], new String[] {"Índice", "Valor"}));
+		table.setModel(new DefaultTableModel(new Object[1][2], new String[] { "ï¿½ndice", "Valor" }));
 
 		JScrollPane scrollPane = new JScrollPane(table);
 		contentPane.add(scrollPane, BorderLayout.CENTER);
-
 
 		criarEventos();
 
@@ -212,17 +211,29 @@ public class ExecucaoMVMView extends JFrame {
 		}
 	}
 
-	public void executar(String caminhoBios) {
+	public void executar(String caminhoBios, Integer enderecoCarga) {
+		try {
+			Memoria memoriaExecutar = new MemoriaController().criarMemoriaPorBios(caminhoBios);
+			executar(memoriaExecutar, enderecoCarga);
+		} catch (MVMException e) {
+			e.printStackTrace();
+			DialogUtils.showDialogErro(this, e);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void executar(Memoria memoria, Integer enderecoCarga) {
 		Runnable run = () -> {
 			try {
-				processador = new Processador();
-				contextoMVM = new ContextoMVM();
-				memoria = new MemoriaController().criarMemoriaPorBios(caminhoBios);
+				this.processador = new Processador();
+				this.contextoMVM = new ContextoMVM();
+				this.memoria = memoria;
 
-				monitor = new Monitor();
-				monitor.adicionarListener(monitorView);
+				this.monitor = new Monitor();
+				this.monitor.adicionarListener(monitorView);
 
-				new MVMController().iniciar(processador, memoria, monitor, contextoMVM);
+				new MVMController().iniciar(processador, memoria, monitor, contextoMVM, enderecoCarga);
 			} catch (MVMException e) {
 				e.printStackTrace();
 				DialogUtils.showDialogErro(this, e);
@@ -276,7 +287,7 @@ public class ExecucaoMVMView extends JFrame {
 				dados[idx][1] = getValorFormatado(tipoVisualizacaoMemoria, memoria.getData((short) idx));
 			}
 
-			table.setModel(new DefaultTableModel(dados, new String[] {"Índice", "Valor"}));
+			table.setModel(new DefaultTableModel(dados, new String[] { "ï¿½ndice", "Valor" }));
 			table.setRowSelectionInterval(idxLinhaSelecionada, idxLinhaSelecionada);
 			table.setColumnSelectionInterval(idxColunaSelecionada, idxColunaSelecionada);
 		}
@@ -306,19 +317,19 @@ public class ExecucaoMVMView extends JFrame {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		switch (tipoVisualizacaoNumero) {
-			case HEXADECIMAL:
-				stringBuilder.append("0x");
-				stringBuilder.append(Integer.toHexString(valor).toUpperCase());
-				corrigirValorFormatado(stringBuilder, 6);
-				break;
-			case DECIMAL:
-				stringBuilder.append(valor);
-				break;
-			default:
-				stringBuilder.append("Bx");
-				stringBuilder.append(Integer.toBinaryString(valor));
-				corrigirValorFormatado(stringBuilder, 10);
-				stringBuilder.insert(6, " ");
+		case HEXADECIMAL:
+			stringBuilder.append("0x");
+			stringBuilder.append(Integer.toHexString(valor).toUpperCase());
+			corrigirValorFormatado(stringBuilder, 6);
+			break;
+		case DECIMAL:
+			stringBuilder.append(valor);
+			break;
+		default:
+			stringBuilder.append("Bx");
+			stringBuilder.append(Integer.toBinaryString(valor));
+			corrigirValorFormatado(stringBuilder, 10);
+			stringBuilder.insert(6, " ");
 		}
 
 		return stringBuilder.toString();

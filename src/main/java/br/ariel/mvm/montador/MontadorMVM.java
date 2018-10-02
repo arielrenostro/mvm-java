@@ -115,75 +115,80 @@ public class MontadorMVM {
 		String comando = getComandoLinha(linha);
 		linha = removerComando(linha, comando);
 		switch (comando) {
-			case MOV:
-				processarComandoMOV(linhaInstrucao, linha, comando);
-				break;
-			case INIT:
-				processarComandoINIT(linhaInstrucao, linha, comando);
-				break;
-			case ADD:
-				processarComandoADD(linhaInstrucao, linha, comando);
-				break;
-			case SUB:
-				processarComandoSUB(linhaInstrucao, linha, comando);
-				break;
-			case INC:
-				processarComandoINC(linhaInstrucao, linha, comando);
-				break;
-			case DEC:
-				processarComandoDEC(linhaInstrucao, linha, comando);
-				break;
-			case JMP:
-				processarComandoJMP(linhaInstrucao, linha, comando);
-				break;
-			case TEST:
-				processarComandoTEST(linhaInstrucao, linha, comando);
-				break;
-			case CALL:
-				processarComandoCALL(linhaInstrucao, linha, comando);
-				break;
-			case RET:
-				processarComandoRET(linhaInstrucao, linha, comando);
-				break;
-			case IN:
-				processarComandoIN(linhaInstrucao, linha, comando);
-				break;
-			case OUT:
-				processarComandoOUT(linhaInstrucao, linha, comando);
-				break;
-			case PUSH:
-				processarComandoPUSH(linhaInstrucao, linha, comando);
-				break;
-			case POP:
-				processarComandoPOP(linhaInstrucao, linha, comando);
-				break;
-			case NOP:
-				processarComandoNOP(linhaInstrucao, linha, comando);
-				break;
-			case HALT:
-				processarComandoHALT(linhaInstrucao, linha, comando);
-				break;
-			case IRET:
-				processarComandoIRET(linhaInstrucao, linha, comando);
-				break;
-			case INT:
-				processarComandoINT(linhaInstrucao, linha, comando);
-				break;
-			case ORG:
-				processarComandoORG(linhaInstrucao, linha, comando);
-				break;
-			default:
-				processarNaoInstrucao(linhaInstrucao, linha, comando);
+		case MOV:
+			processarComandoMOV(linhaInstrucao, linha, comando);
+			break;
+		case INIT:
+			processarComandoINIT(linhaInstrucao, linha, comando);
+			break;
+		case ADD:
+			processarComandoADD(linhaInstrucao, linha, comando);
+			break;
+		case SUB:
+			processarComandoSUB(linhaInstrucao, linha, comando);
+			break;
+		case INC:
+			processarComandoINC(linhaInstrucao, linha, comando);
+			break;
+		case DEC:
+			processarComandoDEC(linhaInstrucao, linha, comando);
+			break;
+		case JMP:
+			processarComandoJMP(linhaInstrucao, linha, comando);
+			break;
+		case TEST:
+			processarComandoTEST(linhaInstrucao, linha, comando);
+			break;
+		case CALL:
+			processarComandoCALL(linhaInstrucao, linha, comando);
+			break;
+		case RET:
+			processarComandoRET(linhaInstrucao, linha, comando);
+			break;
+		case IN:
+			processarComandoIN(linhaInstrucao, linha, comando);
+			break;
+		case OUT:
+			processarComandoOUT(linhaInstrucao, linha, comando);
+			break;
+		case PUSH:
+			processarComandoPUSH(linhaInstrucao, linha, comando);
+			break;
+		case POP:
+			processarComandoPOP(linhaInstrucao, linha, comando);
+			break;
+		case NOP:
+			processarComandoNOP(linhaInstrucao, linha, comando);
+			break;
+		case HALT:
+			processarComandoHALT(linhaInstrucao, linha, comando);
+			break;
+		case IRET:
+			processarComandoIRET(linhaInstrucao, linha, comando);
+			break;
+		case INT:
+			processarComandoINT(linhaInstrucao, linha, comando);
+			break;
+		case ORG:
+			processarComandoORG(linhaInstrucao, linha, comando);
+			break;
+		default:
+			processarNaoInstrucao(linhaInstrucao, linha, comando);
 		}
 	}
 
 	private void processarNaoInstrucao(LinhaInstrucao linhaInstrucao, String linha, String comando) throws MontadorException {
-		boolean ehNumero = ehNumero(comando);
-		if (ehNumero) {
-			processarNumero(linhaInstrucao, linha, comando);
-		} else {
-			processarLabel(linhaInstrucao, linha, comando);
+		if (!ehComentario(comando)) {
+			if (ehNumero(comando)) {
+				processarNumero(linhaInstrucao, linha, comando);
+			} else {
+				processarLabel(linhaInstrucao, linha, comando);
+			}
 		}
+	}
+
+	private boolean ehComentario(String comando) {
+		return comando.startsWith("//");
 	}
 
 	private void processarNumero(LinhaInstrucao linhaInstrucao, String linha, String comando) throws MontadorException {

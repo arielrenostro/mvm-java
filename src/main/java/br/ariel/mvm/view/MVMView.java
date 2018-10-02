@@ -9,11 +9,13 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import br.ariel.mvm.utils.DialogUtils;
+import br.ariel.mvm.utils.Utils;
 
 /**
  * @author ariel
@@ -27,7 +29,7 @@ public class MVMView extends JFrame {
 	public MVMView() {
 		setResizable(false);
 		setTitle("MVM - Mattos Virtual Machine");
-		setBounds(100, 100, 424, 268);
+		setBounds(100, 100, 419, 307);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		JPanel panel = new JPanel();
@@ -43,6 +45,10 @@ public class MVMView extends JFrame {
 		JButton btnExecutarBIOS = new JButton("Executar Bios");
 		btnExecutarBIOS.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		panel.add(btnExecutarBIOS);
+
+		JButton btnExecutarBIOSIncremento = new JButton("Executar Bios c/ carga");
+		btnExecutarBIOSIncremento.setFont(new Font("Dialog", Font.PLAIN, 20));
+		panel.add(btnExecutarBIOSIncremento);
 
 		JPanel panel_1 = new JPanel();
 		getContentPane().add(panel_1, BorderLayout.NORTH);
@@ -70,7 +76,26 @@ public class MVMView extends JFrame {
 			String caminho = getCaminhoArquivo();
 			if (!caminho.isEmpty()) {
 				ExecucaoMVMView execucaoMVMView = new ExecucaoMVMView();
-				execucaoMVMView.executar(caminho);
+				execucaoMVMView.executar(caminho, null);
+			} else {
+				DialogUtils.showDialogErro(this, "Nenhum arquivo de BIOS selecionado");
+			}
+		});
+
+		btnExecutarBIOSIncremento.addActionListener((args) -> {
+			String caminho = getCaminhoArquivo();
+			if (!caminho.isEmpty()) {
+				String enderecoCargaStr = JOptionPane.showInputDialog(this, "Informe o endereço de carga: ");
+				if (Utils.isNotNumber(enderecoCargaStr)) {
+					DialogUtils.showDialogErro(this, "Endereço inválido");
+				}
+				int enderecoCarga = Integer.parseInt(enderecoCargaStr);
+				if (enderecoCarga < 0) {
+					DialogUtils.showDialogErro(this, "Endereço inválido");
+				}
+
+				ExecucaoMVMView execucaoMVMView = new ExecucaoMVMView();
+				execucaoMVMView.executar(caminho, enderecoCarga);
 			} else {
 				DialogUtils.showDialogErro(this, "Nenhum arquivo de BIOS selecionado");
 			}
