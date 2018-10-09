@@ -214,7 +214,7 @@ public class ExecucaoMVMView extends JFrame {
 	public void executar(String caminhoBios, Integer enderecoCarga) {
 		try {
 			Memoria memoriaExecutar = new MemoriaController().criarMemoriaPorBios(caminhoBios);
-			executar(memoriaExecutar, enderecoCarga);
+			executar(memoriaExecutar);
 		} catch (MVMException e) {
 			e.printStackTrace();
 			DialogUtils.showDialogErro(this, e);
@@ -223,7 +223,7 @@ public class ExecucaoMVMView extends JFrame {
 		}
 	}
 
-	public void executar(Memoria memoria, Integer enderecoCarga) {
+	public void executar(Memoria memoria) {
 		Runnable run = () -> {
 			try {
 				this.processador = new Processador();
@@ -233,7 +233,7 @@ public class ExecucaoMVMView extends JFrame {
 				this.monitor = new Monitor();
 				this.monitor.adicionarListener(monitorView);
 
-				new MVMController().iniciar(processador, memoria, monitor, contextoMVM, enderecoCarga);
+				new MVMController().iniciar(processador, memoria, monitor, contextoMVM);
 			} catch (MVMException e) {
 				e.printStackTrace();
 				DialogUtils.showDialogErro(this, e);

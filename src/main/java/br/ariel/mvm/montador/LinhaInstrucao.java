@@ -2,10 +2,13 @@ package br.ariel.mvm.montador;
 
 import java.util.Arrays;
 
+import br.ariel.mvm.model.InstrucaoProcessador;
+
 public class LinhaInstrucao {
 
 	private final String linha;
 	private final int idxLinha;
+	private InstrucaoProcessador instrucaoProcessador;
 	private byte[] instrucao = new byte[0];
 
 	private int idxByte;
@@ -98,4 +101,13 @@ public class LinhaInstrucao {
 		sb.append("]");
 		return sb.toString();
 	}
+
+	public InstrucaoProcessador getInstrucaoProcessador() {
+		return instrucaoProcessador;
+	}
+
+	public void setInstrucaoProcessador(InstrucaoProcessador instrucaoProcessador) {
+		this.instrucaoProcessador = instrucaoProcessador;
+	}
+
 }

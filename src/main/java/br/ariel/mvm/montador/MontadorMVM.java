@@ -42,14 +42,18 @@ public class MontadorMVM {
 
 	private static final int INDICE_MAXIMO = Short.MAX_VALUE - 1;
 
-	public byte[] montar(String codigo) throws MontadorException {
+	public byte[] montar(String codigo, boolean gerarTabelaRealocacao) throws MontadorException {
 		List<String> linhasCodigo = getLinhasCodigo(codigo);
 		List<LinhaInstrucao> linhasInstrucao = getLinhasInstrucao(linhasCodigo);
 		processarLinhasInstrucao(linhasInstrucao);
 		definirIndiceBytes(linhasInstrucao);
 		processarLabels(linhasInstrucao);
-		validarTamanhoInstrucoes(linhasInstrucao);
-		return converterLinhasInstrucaoParaArray(linhasInstrucao);
+
+		int tamanhoTabelaRealocacao = getTamanhoTabelaRealocacao(linhasInstrucao, gerarTabelaRealocacao);
+		int totalBytes = getTotalBytesInstrucoes(linhasInstrucao, tamanhoTabelaRealocacao);
+		validarTamanhoInstrucoes(totalBytes);
+
+		return converterLinhasInstrucaoParaArray(linhasInstrucao, totalBytes, tamanhoTabelaRealocacao);
 	}
 
 	private void processarLinhasInstrucao(List<LinhaInstrucao> linhasInstrucao) throws MontadorException {
@@ -131,49 +135,49 @@ public class MontadorMVM {
 			processarComandoINC(linhaInstrucao, linha, comando);
 			break;
 		case DEC:
-			processarComandoDEC(linhaInstrucao, linha, comando);
+			processarComandoDEC(linhaInstrucao, linha, comando);// TODO
 			break;
 		case JMP:
-			processarComandoJMP(linhaInstrucao, linha, comando);
+			processarComandoJMP(linhaInstrucao, linha, comando);// TODO
 			break;
 		case TEST:
-			processarComandoTEST(linhaInstrucao, linha, comando);
+			processarComandoTEST(linhaInstrucao, linha, comando);// TODO
 			break;
 		case CALL:
-			processarComandoCALL(linhaInstrucao, linha, comando);
+			processarComandoCALL(linhaInstrucao, linha, comando);// TODO
 			break;
 		case RET:
-			processarComandoRET(linhaInstrucao, linha, comando);
+			processarComandoRET(linhaInstrucao, linha, comando);// TODO
 			break;
 		case IN:
-			processarComandoIN(linhaInstrucao, linha, comando);
+			processarComandoIN(linhaInstrucao, linha, comando);// TODO
 			break;
 		case OUT:
-			processarComandoOUT(linhaInstrucao, linha, comando);
+			processarComandoOUT(linhaInstrucao, linha, comando);// TODO
 			break;
 		case PUSH:
-			processarComandoPUSH(linhaInstrucao, linha, comando);
+			processarComandoPUSH(linhaInstrucao, linha, comando);// TODO
 			break;
 		case POP:
-			processarComandoPOP(linhaInstrucao, linha, comando);
+			processarComandoPOP(linhaInstrucao, linha, comando);// TODO
 			break;
 		case NOP:
-			processarComandoNOP(linhaInstrucao, linha, comando);
+			processarComandoNOP(linhaInstrucao, linha, comando);// TODO
 			break;
 		case HALT:
-			processarComandoHALT(linhaInstrucao, linha, comando);
+			processarComandoHALT(linhaInstrucao, linha, comando);// TODO
 			break;
 		case IRET:
-			processarComandoIRET(linhaInstrucao, linha, comando);
+			processarComandoIRET(linhaInstrucao, linha, comando);// TODO
 			break;
 		case INT:
-			processarComandoINT(linhaInstrucao, linha, comando);
+			processarComandoINT(linhaInstrucao, linha, comando);// TODO
 			break;
 		case ORG:
-			processarComandoORG(linhaInstrucao, linha, comando);
+			processarComandoORG(linhaInstrucao, linha, comando);// TODO
 			break;
 		default:
-			processarNaoInstrucao(linhaInstrucao, linha, comando);
+			processarNaoInstrucao(linhaInstrucao, linha, comando);// TODO
 		}
 	}
 
@@ -213,7 +217,7 @@ public class MontadorMVM {
 		linha = linha.toUpperCase().trim();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
-		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		linha = linha.substring(primeiroParametro.length());
 		if (Utils.isNotNumber(primeiroParametro) || Utils.isNotEmpty(linha)) {
 			throw new MontadorException("ORG inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
@@ -252,7 +256,7 @@ public class MontadorMVM {
 		linha = linha.toUpperCase().trim();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
-		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		linha = linha.substring(primeiroParametro.length());
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha) || Utils.isNotNumber(primeiroParametro)) {
 			throw new MontadorException("INT inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
@@ -301,7 +305,7 @@ public class MontadorMVM {
 		linha = linha.toUpperCase().trim();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
-		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		linha = linha.substring(primeiroParametro.length());
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
 			throw new MontadorException("POP inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
@@ -322,7 +326,7 @@ public class MontadorMVM {
 		linha = linha.toUpperCase().trim();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
-		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		linha = linha.substring(primeiroParametro.length());
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
 			throw new MontadorException("PUSH inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
@@ -343,7 +347,7 @@ public class MontadorMVM {
 		linha = linha.toUpperCase().trim();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
-		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		linha = linha.substring(primeiroParametro.length());
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
 			throw new MontadorException("OUT inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
@@ -364,7 +368,7 @@ public class MontadorMVM {
 		linha = linha.toUpperCase().trim();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
-		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		linha = linha.substring(primeiroParametro.length());
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
 			throw new MontadorException("IN inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
@@ -423,7 +427,7 @@ public class MontadorMVM {
 		linha = linha.toUpperCase();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
-		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		linha = linha.substring(primeiroParametro.length());
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
 			throw new MontadorException("DEC inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
@@ -444,7 +448,7 @@ public class MontadorMVM {
 		linha = linha.toUpperCase();
 
 		String primeiroParametro = getPrimeiroParametro(linha);
-		linha = linha.substring(primeiroParametro.length()); // TODO VALIDAR
+		linha = linha.substring(primeiroParametro.length());
 		if (Utils.isEmpty(primeiroParametro) || Utils.isNotEmpty(linha)) {
 			throw new MontadorException("INC inválido na linha [" + (linhaInstrucao.getIdxLinha() + 1) + "]");
 		}
@@ -459,6 +463,7 @@ public class MontadorMVM {
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
+		linhaInstrucao.setInstrucaoProcessador(instrucao);
 	}
 
 	private void processarLabel(LinhaInstrucao linhaInstrucao, String linha, String comando) throws MontadorException {
@@ -498,6 +503,7 @@ public class MontadorMVM {
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
+		linhaInstrucao.setInstrucaoProcessador(instrucao);s
 	}
 
 	private void processarComandoADD(LinhaInstrucao linhaInstrucao, String linha, String comando) throws MontadorException {
@@ -522,6 +528,7 @@ public class MontadorMVM {
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
+		linhaInstrucao.setInstrucaoProcessador(instrucao);
 	}
 
 	private void processarComandoINIT(LinhaInstrucao linhaInstrucao, String linha, String comando) throws MontadorException {
@@ -532,6 +539,7 @@ public class MontadorMVM {
 		}
 
 		linhaInstrucao.setInstrucao(new byte[] { InstrucaoProcessador.INIT_AX.getCode() });
+		linhaInstrucao.setInstrucaoProcessador(InstrucaoProcessador.INIT_AX);
 	}
 
 	private void processarComandoMOV(LinhaInstrucao linhaInstrucao, String linha, String comando) throws MontadorException {
@@ -575,6 +583,8 @@ public class MontadorMVM {
 		} else {
 			linhaInstrucao.setInstrucao(new byte[] { instrucao.getCode() });
 		}
+
+		linhaInstrucao.setInstrucaoProcessador(instrucao);
 	}
 
 	private byte[] quebrarBytesValor(short valor) {
@@ -641,11 +651,11 @@ public class MontadorMVM {
 		if (idxVirgula < idxInstrucao || -1 == idxInstrucao) {
 			idxInstrucao = 0;
 		}
-		return linha.substring(idxInstrucao, idxVirgula); // TODO VALIDAR
+		return linha.substring(idxInstrucao, idxVirgula);
 	}
 
 	private String removerComando(String linha, String comando) {
-		return linha.substring(comando.length()).trim(); // TODO VALIDAR
+		return linha.substring(comando.length()).trim();
 	}
 
 	private String getComandoLinha(String linha) {
@@ -659,30 +669,90 @@ public class MontadorMVM {
 		return linha;
 	}
 
-	private void validarTamanhoInstrucoes(List<LinhaInstrucao> linhasInstrucao) throws SemEspacoMemoriaMontadorException {
-		int totalBytes = getTotalBytesInstrucoes(linhasInstrucao);
+	private void validarTamanhoInstrucoes(int totalBytes) throws SemEspacoMemoriaMontadorException {
 		if (INDICE_MAXIMO < totalBytes) {
 			throw new SemEspacoMemoriaMontadorException(totalBytes);
 		}
 	}
 
-	private byte[] converterLinhasInstrucaoParaArray(List<LinhaInstrucao> linhasInstrucao) {
-		int totalBytes = getTotalBytesInstrucoes(linhasInstrucao);
-		AtomicInteger idx = new AtomicInteger(0);
+	private byte[] converterLinhasInstrucaoParaArray(List<LinhaInstrucao> linhasInstrucao, int totalBytes, int tamanhoTabelaRealocacao) {
+		int idx = 0;
 		byte[] bytes = new byte[totalBytes];
+
+		popularTabelaRealocacao(bytes, tamanhoTabelaRealocacao, linhasInstrucao);
+
 		for (LinhaInstrucao linha : linhasInstrucao) {
 			if (linha.isEhOrg()) {
-				idx.set(linha.getIdxOrg());
+				idx = linha.getIdxOrg();
 			} else {
 				for (byte byteInstrucao : linha.getInstrucao()) {
-					bytes[idx.getAndIncrement()] = byteInstrucao;
+					bytes[(idx++) + tamanhoTabelaRealocacao] = byteInstrucao;
 				}
 			}
 		}
 		return bytes;
 	}
 
-	private int getTotalBytesInstrucoes(List<LinhaInstrucao> linhasInstrucao) {
+	private void popularTabelaRealocacao(byte[] bytes, int tamanhoTabelaRealocacao, List<LinhaInstrucao> linhasInstrucao) {
+		popularTamanhoTabelaRealocacao(bytes, tamanhoTabelaRealocacao);
+
+		int idxTabela = 2;
+		int idx = 0;
+		for (LinhaInstrucao instrucao : linhasInstrucao) {
+			if (instrucao.isEhOrg()) {
+				idx = instrucao.getIdxOrg();
+			} else if (null != instrucao.getInstrucao()) {
+				idx += instrucao.getInstrucao().length;
+			}
+
+			if (isInstrucaoNecessitaRealocacao(instrucao)) {
+				byte[] bytesIndiceRealocacao = Utils.quebrarBytes((short) (idx - 2));
+				bytes[idxTabela++] = bytesIndiceRealocacao[0];
+				bytes[idxTabela++] = bytesIndiceRealocacao[1];
+			}
+		}
+	}
+
+	private void popularTamanhoTabelaRealocacao(byte[] bytes, int tamanhoTabelaRealocacao) {
+		byte[] tamanhoTabelaBytes = Utils.quebrarBytes((short) tamanhoTabelaRealocacao);
+		bytes[0] = tamanhoTabelaBytes[0];
+		bytes[1] = tamanhoTabelaBytes[1];
+	}
+
+	private int getTamanhoTabelaRealocacao(List<LinhaInstrucao> linhasInstrucao, boolean gerarTabelaRealocacao) {
+		int tamanho = 0;
+		if (gerarTabelaRealocacao) {
+			for (LinhaInstrucao instrucao : linhasInstrucao) {
+				if (isInstrucaoNecessitaRealocacao(instrucao)) {
+					tamanho++;
+				}
+			}
+		}
+		return tamanho;
+	}
+
+	private boolean isInstrucaoNecessitaRealocacao(LinhaInstrucao instrucao) {
+		InstrucaoProcessador instrucaoProcessador = instrucao.getInstrucaoProcessador();
+		if (null != instrucaoProcessador) {
+			switch (instrucaoProcessador) {
+			case CALL:
+			case JMP:
+			case MOV_MEM_AX:
+			case MOV_MEM_BP_P_AX:
+			case MOV_MEM_BP_S_AX:
+			case MOV_MEM_BX_P_AX:
+			case MOV_AX_MEM:
+			case MOV_AX_MEM_BP_P:
+			case MOV_AX_MEM_BP_S:
+			case MOV_AX_MEM_BX_P:
+				return true;
+			default:
+			}
+		}
+		return false;
+	}
+
+	private int getTotalBytesInstrucoes(List<LinhaInstrucao> linhasInstrucao, int tamanhoTabelaRealocacao) {
 		AtomicInteger indice = new AtomicInteger(0);
 		AtomicInteger maiorIndice = new AtomicInteger(0);
 		for (LinhaInstrucao linha : linhasInstrucao) {
@@ -695,7 +765,7 @@ public class MontadorMVM {
 				maiorIndice.set(indice.get());
 			}
 		}
-		return maiorIndice.get();
+		return maiorIndice.get() + tamanhoTabelaRealocacao;
 	}
 
 	private List<LinhaInstrucao> getLinhasInstrucao(List<String> linhasCodigo) {
